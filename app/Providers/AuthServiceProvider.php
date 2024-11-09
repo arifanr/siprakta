@@ -37,8 +37,25 @@ class AuthServiceProvider extends ServiceProvider
             ]);
         });
 
-        Gate::define('ListUser', function($user){
-            return $user->hasRole('superadmin');
+        Gate::define('ApproveDenyInternship', function($user){
+            return $user->hasAnyRoles([
+                'admin',
+                'koordinator',
+            ]);
+        });
+
+        Gate::define('CreateInternship', function($user){
+            return $user->hasAnyRoles([
+                'admin',
+                'student',
+            ]);
+        });
+
+        Gate::define('EditInternship', function($user){
+            return $user->hasAnyRoles([
+                'admin',
+                'student',
+            ]);
         });
     }
 }

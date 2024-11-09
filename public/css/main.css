@@ -1,0 +1,17 @@
+body { font-size: 0.9rem; }
+.card-header::after{content: unset}
+
+.select2-container--default .select2-selection--single .select2-selection__arrow {
+    height: 38px;
+}
+.select2-container--default .select2-selection--single {
+    height: 40px;
+}
+.border-bottom-none {
+    border-bottom: none;
+}
+.ellipsis {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}

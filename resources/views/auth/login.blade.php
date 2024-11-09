@@ -56,3 +56,9 @@
     </div>
 </div>
 @endsection
+
+@section('css')
+    <style>
+        body { font-size: 0.9rem; }
+    </style>
+@stop

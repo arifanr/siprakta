@@ -113,7 +113,7 @@ return [
         'enabled' => true,
         'mode' => 'cwrapper',
         'img' => [
-            'path' => 'vendor/adminlte/dist/img/AdminLTELogo.png',
+            'path' => '/img/logo.png',
             'alt' => 'AdminLTE Preloader Image',
             'effect' => 'animation__shake',
             'width' => 60,
@@ -301,34 +301,32 @@ return [
     'menu' => [
         // Navbar items:
         [
-            'type' => 'navbar-search',
-            'text' => 'search',
-            'topnav_right' => true,
-        ],
-        [
             'type' => 'fullscreen-widget',
             'topnav_right' => true,
         ],
 
         // Sidebar items:
+        ['header' => ''],
         [
-            'text' => 'Dashboard',
-            'url' => '/dashboard',
+            'text' => 'Home',
+            'route' => 'dashboard',
             'icon' => 'fas fa-fw fa-home',
             // 'can' => 'manage-blog',
         ],
-        ['header' => 'KERJA PRAKTIK'],
+        ['header' => 'KERJA PRAKTIK', 'classes' => 'text-bold'],
         [
             'text' => 'Daftar KP',
-            'url' => '/list-internship',
+            'route' => 'internship.list',
             'icon' => 'fas fa-fw fa-list',
+            'active' => ['internship', 'internship*',]
         ],
         [
             'text' => 'Seminar KP',
             'url' => 'admin/pages',
             'icon' => 'fas fa-fw fa-file-powerpoint',
         ],
-        ['header' => 'TUGAS AKHIR'],
+        ['header' => ''],
+        ['header' => 'TUGAS AKHIR', 'classes' => 'text-bold'],
         [
             'text' => 'Daftar TA',
             'url' => 'admin/settings',
@@ -399,17 +397,23 @@ return [
             ],
         ],
         'Select2' => [
-            'active' => false,
+            'active' => true,
             'files' => [
                 [
                     'type' => 'js',
-                    'asset' => false,
-                    'location' => '//cdnjs.cloudflare.com/ajax/libs/select2/4.0.3/js/select2.min.js',
+                    'asset' => true,
+                    'location' => '//cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/js/select2.min.js',
+                    
                 ],
                 [
                     'type' => 'css',
-                    'asset' => false,
-                    'location' => '//cdnjs.cloudflare.com/ajax/libs/select2/4.0.3/css/select2.css',
+                    'asset' => true,
+                    'location' => '//cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/css/select2.min.css',
+                ],
+                [
+                    'type' => 'css',
+                    'asset' => true,
+                    'location' => '//cdn.jsdelivr.net/npm/select2-bootstrap-5-theme@1.3.0/dist/select2-bootstrap-5-theme.min.css',
                 ],
             ],
         ],
@@ -445,6 +449,16 @@ return [
                     'type' => 'js',
                     'asset' => false,
                     'location' => '//cdnjs.cloudflare.com/ajax/libs/pace/1.0.2/pace.min.js',
+                ],
+            ],
+        ],
+        'InputMask' => [
+            'active' => true,
+            'files' => [
+                [
+                    'type' => 'js',
+                    'asset' => true,
+                    'location' => '//cdnjs.cloudflare.com/ajax/libs/jquery.inputmask/5.0.9/jquery.inputmask.min.js',
                 ],
             ],
         ],

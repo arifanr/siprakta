@@ -44,10 +44,16 @@ class User extends Authenticatable
         ];
     }
 
+    /**
+     * 
+     */
     public function usersAttributes() {
         return $this->hasMany('App\Models\UsersAttribute', 'users_id');
     }
 
+    /**
+     * hasRole
+     */
     public function hasRole($role) {
         if ($this->usersAttributes()->where('attribute_name', 'role')->where('attribute_value', $role)->first()) {
             return true;
@@ -55,6 +61,9 @@ class User extends Authenticatable
         return false;
     }
 
+    /**
+     * 
+     */
     public function hasAnyRoles($roles) {
         if ($this->usersAttributes()->where('attribute_name', 'role')->whereIn('attribute_value', $roles)->first()) {
             return true;

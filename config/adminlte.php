@@ -309,7 +309,7 @@ return [
         ['header' => ''],
         [
             'text' => 'Home',
-            'route' => 'dashboard',
+            'route' => 'home',
             'icon' => 'fas fa-fw fa-home',
             // 'can' => 'manage-blog',
         ],

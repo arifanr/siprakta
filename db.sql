@@ -141,6 +141,23 @@ final_project
     updated_at
     updated_by
 
+create table final_project
+(
+    id              bigserial   primary key,
+    title           varchar(512) not null,
+    description     text,
+    student_id      bigint       not null,
+    mentor_id       bigint,
+    transcript_id   bigint       not null,
+    krs_id          bigint       not null,
+    proposal_id     bigint,
+    status          integer     DEFAULT 0 not null,
+    created_by      varchar(64)  not null,
+    created_at      timestamp    not null,
+    updated_by      varchar(64),
+    updated_at      timestamp
+);
+
 notification
     id
     type

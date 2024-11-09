@@ -57,5 +57,26 @@ class AuthServiceProvider extends ServiceProvider
                 'student',
             ]);
         });
+
+        Gate::define('ApproveDenyFinalProject', function($user){
+            return $user->hasAnyRoles([
+                'admin',
+                'koordinator',
+            ]);
+        });
+
+        Gate::define('CreateFinalProject', function($user){
+            return $user->hasAnyRoles([
+                'admin',
+                'student',
+            ]);
+        });
+
+        Gate::define('EditFinalProject', function($user){
+            return $user->hasAnyRoles([
+                'admin',
+                'student',
+            ]);
+        });
     }
 }

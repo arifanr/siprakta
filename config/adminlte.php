@@ -329,8 +329,9 @@ return [
         ['header' => 'TUGAS AKHIR', 'classes' => 'text-bold'],
         [
             'text' => 'Daftar TA',
-            'url' => 'admin/settings',
+            'route' => 'finalproject.list',
             'icon' => 'fas fa-fw fa-list',
+            'active' => ['final-project', 'final-project*',]
         ],
         [
             'text' => 'Seminar TA',

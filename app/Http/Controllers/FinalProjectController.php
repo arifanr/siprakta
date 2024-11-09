@@ -11,7 +11,7 @@ use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Validator;
 
-class InternshipController extends Controller
+class FinalProjectController extends Controller
 {
     /**
      * Create a new controller instance.
@@ -34,27 +34,27 @@ class InternshipController extends Controller
         $query = null;
 
         if ($user->hasRole('student')) {
-            $query = DB::table('internship')
+            $query = DB::table('final_project')
                 ->select('*')
                 ->where('student_id', '=', $user->id)
                 ->orderBy('created_at', 'asc');
         } else {
-            $query = DB::table('internship as i')
-                ->select('i.*', 'u.username', 'u.name')
-                ->leftjoin('users as u', 'u.id', '=', 'i.student_id')
+            $query = DB::table('final_project as fp')
+                ->select('fp.*', 'u.username', 'u.name')
+                ->leftjoin('users as u', 'u.id', '=', 'fp.student_id')
                 ->orderBy('created_at', 'asc');
 
             if ($request->keyword) {
                 $query->where('u.username', 'ilike', "%" . $request->keyword . "%");
                 $query->orWhere('u.name', 'ilike', "%" . $request->keyword . "%");
-                $query->orWhere('i.title', 'ilike', "%" . $request->keyword . "%");
-                $query->orWhere('i.description', 'ilike', "%" . $request->keyword . "%");
+                $query->orWhere('fp.title', 'ilike', "%" . $request->keyword . "%");
+                $query->orWhere('fp.description', 'ilike', "%" . $request->keyword . "%");
             }
         }
 
         $data = $query->paginate(15);
 
-        return view('internship/index', [
+        return view('final-project/index', [
             'data' => $data,
         ]);
     }
@@ -64,45 +64,45 @@ class InternshipController extends Controller
      */
     public function detail($id)
     {
-        $query = DB::table('internship as i')
+        $query = DB::table('final_project as fp')
             ->select(
-                'i.*',
+                'fp.*',
                 'u.username',
                 'u.name',
                 DB::raw("(SELECT u.name 
                     FROM users u
-                    WHERE u.id = i.mentor_id LIMIT 1) AS mentor_name"),
+                    WHERE u.id = fp.mentor_id LIMIT 1) AS mentor_name"),
                 DB::raw("(SELECT n.message
                     FROM notification n
-                    WHERE n.entity_id = i.id
+                    WHERE n.entity_id = fp.id
                     ORDER BY n.created_at desc LIMIT 1) AS reason"),
                 DB::raw("(SELECT ud.name
                     FROM users_document ud
-                    WHERE ud.id = i.proposal_id LIMIT 1) AS proposal_name"),
+                    WHERE ud.id = fp.proposal_id LIMIT 1) AS proposal_name"),
                 DB::raw("(SELECT ud.location
                     FROM users_document ud
-                    WHERE ud.id = i.proposal_id LIMIT 1) AS proposal_url"),
+                    WHERE ud.id = fp.proposal_id LIMIT 1) AS proposal_url"),
                 DB::raw("(SELECT ud.name
                     FROM users_document ud
-                    WHERE ud.id = i.krs_id LIMIT 1) AS krs_name"),
+                    WHERE ud.id = fp.krs_id LIMIT 1) AS krs_name"),
                 DB::raw("(SELECT ud.location
                     FROM users_document ud
-                    WHERE ud.id = i.krs_id LIMIT 1) AS krs_url"),
+                    WHERE ud.id = fp.krs_id LIMIT 1) AS krs_url"),
                 DB::raw("(SELECT ud.name
                     FROM users_document ud
-                    WHERE ud.id = i.transcript_id LIMIT 1) AS transcript_name"),
+                    WHERE ud.id = fp.transcript_id LIMIT 1) AS transcript_name"),
                 DB::raw("(SELECT ud.location
                     FROM users_document ud
-                    WHERE ud.id = i.transcript_id LIMIT 1) AS transcript_url"),
+                    WHERE ud.id = fp.transcript_id LIMIT 1) AS transcript_url"),
             )
-            ->where('i.id', '=', $id)
-            ->leftjoin('users as u', 'u.id', '=', 'i.student_id')
+            ->where('fp.id', '=', $id)
+            ->leftjoin('users as u', 'u.id', '=', 'fp.student_id')
             ->orderBy('created_at', 'asc')
             ->first();
 
         if (!$query) {
             return redirect()
-                ->route('internship.list')
+                ->route('finalproject.list')
                 ->with('failed', '');
         }
 
@@ -110,24 +110,24 @@ class InternshipController extends Controller
         $own = null;
 
         if ($user->hasRole('student')) {
-            $own = DB::table('internship as i')
+            $own = DB::table('final_project as fp')
                 ->where('student_id', '=', $user->id)
                 ->first();
 
             if (!$own) {
                 return redirect()
-                    ->route('internship.list')
+                    ->route('finalproject.list')
                     ->with('failed', '');
             }
 
             if ($own->id != $query->id) {
                 return redirect()
-                    ->route('internship.list')
+                    ->route('finalproject.list')
                     ->with('failed', '');
             }
         }
 
-        return view('internship/detail', [
+        return view('final-project/detail', [
             'data' => $query,
         ]);
     }
@@ -137,22 +137,22 @@ class InternshipController extends Controller
      */
     public function create()
     {
-        $mentorInternships = DB::table('users as u')
+        $mentors = DB::table('users as u')
             ->select(
                 'u.id',
                 'u.username',
                 'u.name',
                 DB::raw("(SELECT ua.attribute_value
                     FROM users_attribute ua
-                    WHERE u.id = ua.users_id AND ua.attribute_value = 'pembimbing_kp' LIMIT 1) AS mentor_internship"),
+                    WHERE u.id = ua.users_id AND ua.attribute_value = 'pembimbing_ta' LIMIT 1) AS mentor"),
             )
             ->leftJoin('users_attribute', 'u.id', '=', 'users_attribute.users_id')
-            ->whereIn('attribute_value', ['pembimbing_kp'])
+            ->whereIn('attribute_value', ['pembimbing_ta'])
             ->where('flag_delete', '=', 0)
             ->get();
 
-        return view('internship/create', [
-            'mentorInternships' => $mentorInternships,
+        return view('final-project/create', [
+            'mentors' => $mentors,
         ]);
     }
 
@@ -164,7 +164,7 @@ class InternshipController extends Controller
         $rules = [
             'transcript' => 'required|file|mimes:webp,jpeg,jpg,png,pdf|max:2048',
             'krs' => 'required|file|mimes:webp,jpeg,jpg,png,pdf|max:2048',
-            'proposal' => 'file|mimes:webp,jpeg,jpg,png,pdf|max:2048',
+            'proposal' => 'required|file|mimes:webp,jpeg,jpg,png,pdf|max:2048',
         ];
 
         $validator = Validator::make($request->all(), $rules);
@@ -180,19 +180,19 @@ class InternshipController extends Controller
         try {
             DB::beginTransaction();
 
-            $path = 'save_folder/internship';
+            $path = 'save_folder/final_project';
 
             if (!file_exists($path)) {
                 mkdir($path, 0775, true);
             }
 
-            $mentorInternshipID = null;
+            $mentorID = null;
             $proposalID = null;
             $trancriptID = null;
             $krsID = null;
 
             if (isset($request->mentor)) {
-                $mentorInternshipID = $request->mentor;
+                $mentorID = $request->mentor;
             }
 
             if (isset($request->transcript)) {
@@ -241,7 +241,7 @@ class InternshipController extends Controller
 
                 $proposalID = DB::table('users_document')->insertGetId([
                     'name' => $originalName,
-                    'type' => 'internship_proposal',
+                    'type' => 'final_project_proposal',
                     'location' => $path . '/' . $fileName,
                     'users_id' => Auth::user()->id,
                     'created_by' => Auth::user()->username,
@@ -249,19 +249,11 @@ class InternshipController extends Controller
                 ]);
             }
 
-            $start_date = Carbon::createFromFormat('d/m/Y', $request->start_date);
-            $end_date = Carbon::createFromFormat('d/m/Y', $request->end_date);
-
-            DB::table('internship')->insert([
+            DB::table('final_project')->insert([
                 'title' => $request->title,
                 'description' => $request->description,
-                'company_name' => $request->company_name,
-                'company_address' => $request->company_address,
-                'company_phone' => $request->company_phone,
-                'start_date' => $start_date->toDateTimeString(),
-                'end_date' => $end_date->toDateTimeString(),
                 'student_id' => Auth::user()->id,
-                'mentor_id' => $mentorInternshipID,
+                'mentor_id' => $mentorID,
                 'transcript_id' => $trancriptID,
                 'krs_id' => $krsID,
                 'proposal_id' => $proposalID,
@@ -273,8 +265,8 @@ class InternshipController extends Controller
             DB::commit();
 
             return redirect()
-                ->route('internship.list')
-                ->with('success', 'Internship data and files uploaded successfully.');
+                ->route('finalproject.list')
+                ->with('success', 'Final Projects data and files uploaded successfully.');
         } catch (\Exception $e) {
             DB::rollBack();
             return back()->with('error', 'Failed to upload data: ' . $e->getMessage())->withInput();
@@ -286,62 +278,62 @@ class InternshipController extends Controller
      */
     public function edit($id, Request $request)
     {
-        $mentorInternships = DB::table('users as u')
+        $mentors = DB::table('users as u')
             ->select(
                 'u.id',
                 'u.username',
                 'u.name',
                 DB::raw("(SELECT ua.attribute_value
                     FROM users_attribute ua
-                    WHERE u.id = ua.users_id AND ua.attribute_value = 'pembimbing_kp' LIMIT 1) AS mentor_internship"),
+                    WHERE u.id = ua.users_id AND ua.attribute_value = 'pembimbing_kp' LIMIT 1) AS mentor"),
             )
             ->leftJoin('users_attribute', 'u.id', '=', 'users_attribute.users_id')
-            ->whereIn('attribute_value', ['pembimbing_kp'])
+            ->whereIn('attribute_value', ['pembimbing_ta'])
             ->where('flag_delete', '=', 0)
             ->get();
 
-        $query = DB::table('internship as i')
+        $query = DB::table('final_project as fp')
             ->select(
-                'i.*',
+                'fp.*',
                 'u.username',
                 'u.name',
                 DB::raw("(SELECT u.id 
                     FROM users u
-                    WHERE u.id = i.mentor_id LIMIT 1) AS mentor_id"),
+                    WHERE u.id = fp.mentor_id LIMIT 1) AS mentor_id"),
                 DB::raw("(SELECT u.name 
                     FROM users u
-                    WHERE u.id = i.mentor_id LIMIT 1) AS mentor_name"),
+                    WHERE u.id = fp.mentor_id LIMIT 1) AS mentor_name"),
                 DB::raw("(SELECT n.message
                     FROM notification n
-                    WHERE n.entity_id = i.id
+                    WHERE n.entity_id = fp.id
                     ORDER BY n.created_at desc LIMIT 1) AS reason"),
                 DB::raw("(SELECT ud.name
                     FROM users_document ud
-                    WHERE ud.id = i.proposal_id LIMIT 1) AS proposal_name"),
+                    WHERE ud.id = fp.proposal_id LIMIT 1) AS proposal_name"),
                 DB::raw("(SELECT ud.location
                     FROM users_document ud
-                    WHERE ud.id = i.proposal_id LIMIT 1) AS proposal_url"),
+                    WHERE ud.id = fp.proposal_id LIMIT 1) AS proposal_url"),
                 DB::raw("(SELECT ud.name
                     FROM users_document ud
-                    WHERE ud.id = i.krs_id LIMIT 1) AS krs_name"),
+                    WHERE ud.id = fp.krs_id LIMIT 1) AS krs_name"),
                 DB::raw("(SELECT ud.location
                     FROM users_document ud
-                    WHERE ud.id = i.krs_id LIMIT 1) AS krs_url"),
+                    WHERE ud.id = fp.krs_id LIMIT 1) AS krs_url"),
                 DB::raw("(SELECT ud.name
                     FROM users_document ud
-                    WHERE ud.id = i.transcript_id LIMIT 1) AS transcript_name"),
+                    WHERE ud.id = fp.transcript_id LIMIT 1) AS transcript_name"),
                 DB::raw("(SELECT ud.location
                     FROM users_document ud
-                    WHERE ud.id = i.transcript_id LIMIT 1) AS transcript_url"),
+                    WHERE ud.id = fp.transcript_id LIMIT 1) AS transcript_url"),
             )
-            ->where('i.id', '=', $id)
-            ->leftjoin('users as u', 'u.id', '=', 'i.student_id')
+            ->where('fp.id', '=', $id)
+            ->leftjoin('users as u', 'u.id', '=', 'fp.student_id')
             ->orderBy('created_at', 'asc')
             ->first();
 
         if (!$query) {
             return redirect()
-                ->route('internship.list')
+                ->route('finalproject.list')
                 ->with('failed', '');
         }
 
@@ -349,27 +341,27 @@ class InternshipController extends Controller
         $own = null;
 
         if ($user->hasRole('student')) {
-            $own = DB::table('internship as i')
+            $own = DB::table('final_project as fp')
                 ->where('student_id', '=', $user->id)
                 ->first();
 
             if (!$own) {
                 return redirect()
-                    ->route('internship.list')
+                    ->route('finalproject.list')
                     ->with('failed', '');
             }
 
             if ($own->id != $query->id) {
                 return redirect()
-                    ->route('internship.list')
+                    ->route('finalproject.list')
                     ->with('failed', '');
             }
         }
 
-        return view('internship/edit', [
+        return view('final-project/edit', [
             'id' => $id,
             'data' => $query,
-            'mentorInternships' => $mentorInternships,
+            'mentors' => $mentors,
         ]);
     }
 
@@ -397,19 +389,19 @@ class InternshipController extends Controller
         try {
             DB::beginTransaction();
 
-            $path = 'save_folder/internship';
+            $path = 'save_folder/final_project';
 
             if (!file_exists($path)) {
                 mkdir($path, 0775, true);
             }
 
-            $mentorInternshipID = $request->mentor_id ?? null;
+            $mentorID = $request->mentor_id ?? null;
             $proposalID = $request->proposal_id ?? null;
             $trancriptID = $request->transcript_id ?? null;
             $krsID = $request->krs_id ?? null;
 
             if (isset($request->mentor)) {
-                $mentorInternshipID = $request->mentor;
+                $mentorID = $request->mentor;
             }
 
             if (isset($request->transcript)) {
@@ -458,7 +450,7 @@ class InternshipController extends Controller
 
                 $proposalID = DB::table('users_document')->insertGetId([
                     'name' => $originalName,
-                    'type' => 'internship_proposal',
+                    'type' => 'final_project_proposal',
                     'location' => $path . '/' . $fileName,
                     'users_id' => Auth::user()->id,
                     'created_by' => Auth::user()->username,
@@ -466,20 +458,12 @@ class InternshipController extends Controller
                 ]);
             }
 
-            $start_date = Carbon::createFromFormat('d/m/Y', $request->start_date);
-            $end_date = Carbon::createFromFormat('d/m/Y', $request->end_date);
-
-            DB::table('internship')
+            DB::table('final_project')
                 ->where('id', '=', $id)
                 ->update([
                     'title' => $request->title,
                     'description' => $request->description,
-                    'company_name' => $request->company_name,
-                    'company_address' => $request->company_address,
-                    'company_phone' => $request->company_phone,
-                    'start_date' => $start_date->toDateTimeString(),
-                    'end_date' => $end_date->toDateTimeString(),
-                    'mentor_id' => $mentorInternshipID,
+                    'mentor_id' => $mentorID,
                     'transcript_id' => $trancriptID,
                     'krs_id' => $krsID,
                     'proposal_id' => $proposalID,
@@ -491,8 +475,8 @@ class InternshipController extends Controller
             DB::commit();
 
             return redirect()
-                ->route('internship.list')
-                ->with('success', 'Internship data and files uploaded successfully.');
+                ->route('finalproject.list')
+                ->with('success', 'Final Project data and files uploaded successfully.');
         } catch (\Exception $e) {
             DB::rollBack();
             return back()->with('error', 'Failed to upload data: ' . $e->getMessage())->withInput();
@@ -507,7 +491,7 @@ class InternshipController extends Controller
         try {
             DB::beginTransaction();
 
-            DB::table('internship')
+            DB::table('final_project')
                 ->where('id', $id)
                 ->update([
                     'status' => 1,
@@ -520,7 +504,7 @@ class InternshipController extends Controller
                     'type' => 'approve',
                     'title' => 'Disetujui',
                     'message' => '',
-                    'entity' => 'internship',
+                    'entity' => 'final_project',
                     'entity_id' => $id,
                     'users_id' => Auth::user()->id,
                     'created_by' => Auth::user()->username,
@@ -530,8 +514,8 @@ class InternshipController extends Controller
             DB::commit();
 
             return redirect()
-                ->route('internship.list')
-                ->with('success', 'Internship status updated successfully.');
+                ->route('finalproject.list')
+                ->with('success', 'Final Project status updated successfully.');
         } catch (\Exception $e) {
             DB::rollBack();
             return back()->with('error', 'Failed to upload data: ' . $e->getMessage())->withInput();
@@ -546,7 +530,7 @@ class InternshipController extends Controller
         try {
             DB::beginTransaction();
 
-            DB::table('internship')
+            DB::table('final_project')
                 ->where('id', $id)
                 ->update([
                     'status' => 2,
@@ -559,7 +543,7 @@ class InternshipController extends Controller
                     'type' => 'deny',
                     'title' => 'Ditolak',
                     'message' => $request->reason,
-                    'entity' => 'internship',
+                    'entity' => 'final_project',
                     'entity_id' => $id,
                     'users_id' => Auth::user()->id,
                     'created_by' => Auth::user()->username,
@@ -569,8 +553,8 @@ class InternshipController extends Controller
             DB::commit();
 
             return redirect()
-                ->route('internship.list')
-                ->with('success', 'Internship status updated successfully.');
+                ->route('finalproject.list')
+                ->with('success', 'Final Project status updated successfully.');
         } catch (\Exception $e) {
             DB::rollBack();
             return back()->with('error', 'Failed to upload data: ' . $e->getMessage())->withInput();

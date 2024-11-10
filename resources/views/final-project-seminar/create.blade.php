@@ -1,9 +1,9 @@
 @extends('adminlte::page')
 
-@section('title', 'Seminar Kerja Praktik')
+@section('title', 'Seminar Tugas Akhir')
 
 @section('content_header')
-    <h1><b>Seminar Kerja Praktik</b></h1>
+    <h1><b>Seminar Tugas Akhir</b></h1>
 @stop
 
 @section('content')
@@ -16,27 +16,41 @@
         <div class="col-12 col-md-9">
             <div class="card card-info">
                 <div class="card-header d-flex align-items-center justify-content-between">
-                    <h3 class="card-title mb-0">Ajukan Seminar Kerja Praktik</h3>
+                    <h3 class="card-title mb-0">Ajukan Seminar Tugas Akhir</h3>
                     <div class="card-tools text-right">
-                        <a href="{{ route('internship-seminar.list') }}" class="btn btn-dark btn-sm">
+                        <a href="{{ route('finalproject-seminar.list') }}" class="btn btn-dark btn-sm">
                             Back
                         </a>
                     </div>
                 </div>
-                <form class="form-horizontal" action="{{ route('internship-seminar.save') }}" method="POST"
+                <form class="form-horizontal" action="{{ route('finalproject-seminar.save') }}" method="POST"
                     enctype="multipart/form-data">
                     @csrf
                     <div class="card-body">
                         <div class="form-group row">
                             <label for="" class="col-sm-3 col-form-label">
-                                Pembimbing KP
+                                Pembimbing 1
                                 <span class="text-red">*</span>
                             </label>
                             <div class="col-sm-9">
-                                <select class="form-control select2bs4 w-full" name="mentor" required>
-                                    <option value="">-- Pembimbing KP --</option>
-                                    @foreach ($mentorInternships as $item)
-                                        <option value="{{ $item->id }}" {{ old('mentor') == $item->id ? 'selected' : '' }}>{{ $item->name }}</option>
+                                <select class="form-control select2bs4 w-full" name="mentor_1" required>
+                                    <option value="">-- Pembimbing TA --</option>
+                                    @foreach ($mentors as $item)
+                                        <option value="{{ $item->id }}" {{ old('mentor_1') == $item->id ? 'selected' : '' }}>{{ $item->name }}</option>
+                                    @endforeach
+                                </select>
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label for="" class="col-sm-3 col-form-label">
+                                Pembimbing 2
+                                <span class="text-red">*</span>
+                            </label>
+                            <div class="col-sm-9">
+                                <select class="form-control select2bs4 w-full" name="mentor_2" required>
+                                    <option value="">-- Pembimbing TA --</option>
+                                    @foreach ($mentors as $item)
+                                        <option value="{{ $item->id }}" {{ old('mentor_2') == $item->id ? 'selected' : '' }}>{{ $item->name }}</option>
                                     @endforeach
                                 </select>
                             </div>
@@ -56,67 +70,6 @@
                                 <textarea class="form-control" name="description" rows="5">{{ old('description') }}</textarea>
                             </div>
                         </div>
-                        <div class="form-group row">
-                            <label for="" class="col-sm-3 col-form-label">
-                                Nama Perusahaan
-                                <span class="text-red">*</span>
-                            </label>
-                            <div class="col-sm-9">
-                                <input type="text" class="form-control" name="company_name" value="{{ old('company_name') }}" required>
-                            </div>
-                        </div>
-                        <div class="form-group row">
-                            <label for="" class="col-sm-3 col-form-label">
-                                Alamat Perusahaan
-                                <span class="text-red">*</span>
-                            </label>
-                            <div class="col-sm-9">
-                                <input type="text" class="form-control" name="company_address" value="{{ old('company_address') }}" required>
-                            </div>
-                        </div>
-                        <div class="form-group row">
-                            <label for="" class="col-sm-3 col-form-label">
-                                No. Telepon Perusahaan
-                                <span class="text-red">*</span>
-                            </label>
-                            <div class="col-sm-9">
-                                <input type="number" class="form-control" name="company_phone" pattern="\d*"
-                                    oninput="this.value = this.value.slice(0, 13);" value="{{ old('company_phone') }}" required>
-                            </div>
-                        </div>
-                        <div class="form-group row">
-                            <label for="" class="col-sm-3 col-form-label">
-                                Tanggal Mulai
-                                <span class="text-red">*</span>
-                            </label>
-                            <div class="col-sm-9">
-                                <div class="input-group">
-                                    <div class="input-group-prepend">
-                                        <span class="input-group-text"><i class="far fa-calendar-alt"></i></span>
-                                    </div>
-                                    <input type="text" class="form-control" name="start_date" id="datemask1"
-                                        data-inputmask-alias="datetime" data-inputmask-inputformat="dd/mm/yyyy" data-mask
-                                        value="{{ old('start_date') }}" required>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="form-group row">
-                            <label for="" class="col-sm-3 col-form-label">
-                                Tanggal Berakhir
-                                <span class="text-red">*</span>
-                            </label>
-                            <div class="col-sm-9">
-                                <div class="input-group">
-                                    <div class="input-group-prepend">
-                                        <span class="input-group-text"><i class="far fa-calendar-alt"></i></span>
-                                    </div>
-                                    <input type="text" class="form-control" name="end_date" id="datemask2"
-                                        data-inputmask-alias="datetime" data-inputmask-inputformat="dd/mm/yyyy" data-mask
-                                        value="{{ old('end_date') }}" required>
-                                </div>
-                            </div>
-                        </div>
-                        
                         <div class="form-group row">
                             <label for="" class="col-sm-3 col-form-label">
                                 Formulir Pendaftaran
@@ -164,7 +117,7 @@
                         </div>
                         <div class="form-group row">
                             <label for="" class="col-sm-3 col-form-label">
-                                Laporan KP
+                                Laporan TA
                                 <span class="text-red">*</span>
                             </label>
                             <div class="col-sm-9">
@@ -172,21 +125,6 @@
                                     <div class="custom-file">
                                         <input type="file" class="custom-file-input" id="exampleInputFile"
                                             name="report" accept=".pdf, .webp, .png, .jpeg, .jpg" required>
-                                        <label class="custom-file-label" for="exampleInputFile">Choose file</label>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="form-group row">
-                            <label for="" class="col-sm-3 col-form-label">
-                                Lembar Penilaian KP
-                                <span class="text-red">*</span>
-                            </label>
-                            <div class="col-sm-9">
-                                <div class="input-group">
-                                    <div class="custom-file">
-                                        <input type="file" class="custom-file-input" id="exampleInputFile"
-                                            name="assessment_sheet" accept=".pdf, .webp, .png, .jpeg, .jpg" required>
                                         <label class="custom-file-label" for="exampleInputFile">Choose file</label>
                                     </div>
                                 </div>
@@ -210,10 +148,10 @@
                                 </div>
                             </div>
                             <div class="form-group row">
-                                <label for="" class="col-sm-3 col-form-label">Penguji KP 1</label>
+                                <label for="" class="col-sm-3 col-form-label">Penguji TA 1</label>
                                 <div class="col-sm-9">
                                     <select class="form-control select2bs4 w-full" name="examiner1">
-                                        <option value="">-- Penguji KP --</option>
+                                        <option value="">-- Penguji TA --</option>
                                         @foreach ($examiners as $item)
                                             <option value="{{ $item->id }}" {{ old('examiner1') == $item->id ? 'selected' : '' }}>{{ $item->name }}</option>
                                         @endforeach
@@ -221,12 +159,23 @@
                                 </div>
                             </div>
                             <div class="form-group row">
-                                <label for="" class="col-sm-3 col-form-label">Penguji KP 2</label>
+                                <label for="" class="col-sm-3 col-form-label">Penguji TA 2</label>
                                 <div class="col-sm-9">
                                     <select class="form-control select2bs4 w-full" name="examiner2">
-                                        <option value="">-- Penguji KP --</option>
+                                        <option value="">-- Penguji TA --</option>
                                         @foreach ($examiners as $item)
                                             <option value="{{ $item->id }}" {{ old('examiner2') == $item->id ? 'selected' : '' }}>{{ $item->name }}</option>
+                                        @endforeach
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="form-group row">
+                                <label for="" class="col-sm-3 col-form-label">Penguji TA 3</label>
+                                <div class="col-sm-9">
+                                    <select class="form-control select2bs4 w-full" name="examiner3">
+                                        <option value="">-- Penguji TA --</option>
+                                        @foreach ($examiners as $item)
+                                            <option value="{{ $item->id }}" {{ old('examiner3') == $item->id ? 'selected' : '' }}>{{ $item->name }}</option>
                                         @endforeach
                                     </select>
                                 </div>
@@ -235,7 +184,7 @@
                     </div>
                     <div class="card-footer">
                         <button type="submit" class="btn btn-info px-3">Submit</button>
-                        <a href="{{ route('internship-seminar.list') }}" class="btn btn-default float-right px-3">
+                        <a href="{{ route('finalproject-seminar.list') }}" class="btn btn-default float-right px-3">
                             Cancel
                         </a>
                     </div>

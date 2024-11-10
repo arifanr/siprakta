@@ -31,25 +31,30 @@ class InternshipSeminarController extends Controller
     public function index(Request $request)
     {
         $user = Auth::user();
-        $query = null;
+        $query = DB::table('internship_seminar as i')
+            ->select(
+                'i.*',
+                'u.username',
+                'u.name',
+                DB::raw("(SELECT u.name 
+                    FROM users u
+                    WHERE u.id = i.examiner1_id LIMIT 1) AS examiner1"),
+                DB::raw("(SELECT u.name 
+                    FROM users u
+                    WHERE u.id = i.examiner2_id LIMIT 1) AS examiner2"),
+            )
+            ->leftjoin('users as u', 'u.id', '=', 'i.student_id')
+            ->orderBy('created_at', 'asc');
 
         if ($user->hasRole('student')) {
-            $query = DB::table('internship_seminar')
-                ->select('*')
-                ->where('student_id', '=', $user->id)
-                ->orderBy('created_at', 'asc');
-        } else {
-            $query = DB::table('internship_seminar as i')
-                ->select('i.*', 'u.username', 'u.name')
-                ->leftjoin('users as u', 'u.id', '=', 'i.student_id')
-                ->orderBy('created_at', 'asc');
+            $query->where('student_id', '=', $user->id);
+        }
 
-            if ($request->keyword) {
-                $query->where('u.username', 'ilike', "%" . $request->keyword . "%");
-                $query->orWhere('u.name', 'ilike', "%" . $request->keyword . "%");
-                $query->orWhere('i.title', 'ilike', "%" . $request->keyword . "%");
-                $query->orWhere('i.description', 'ilike', "%" . $request->keyword . "%");
-            }
+        if ($request->keyword) {
+            $query->where('u.username', 'ilike', "%" . $request->keyword . "%");
+            $query->orWhere('u.name', 'ilike', "%" . $request->keyword . "%");
+            $query->orWhere('i.title', 'ilike', "%" . $request->keyword . "%");
+            $query->orWhere('i.description', 'ilike', "%" . $request->keyword . "%");
         }
 
         $data = $query->paginate(15);
@@ -510,7 +515,7 @@ class InternshipSeminarController extends Controller
         try {
             DB::beginTransaction();
 
-            $path = 'save_folder/internship';
+            $path = 'save_folder/internship_seminar';
 
             if (!file_exists($path)) {
                 mkdir($path, 0775, true);
@@ -630,7 +635,7 @@ class InternshipSeminarController extends Controller
 
             $start_date = Carbon::createFromFormat('d/m/Y H:i:s', $request->start_date . ' 00:00:00');
             $end_date = Carbon::createFromFormat('d/m/Y H:i:s', $request->end_date . ' 00:00:00');
-            
+
             if ($request->schedule) {
                 $schedule = Carbon::createFromFormat('d/m/Y H:i', $request->schedule, 'Asia/Jakarta')->utc();
             }

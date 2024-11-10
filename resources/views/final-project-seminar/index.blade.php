@@ -1,9 +1,9 @@
 @extends('adminlte::page')
 
-@section('title', 'Seminar Kerja Praktik')
+@section('title', 'Seminar Tugas Akhir')
 
 @section('content_header')
-    <h1><b>Seminar Kerja Praktik</b></h1>
+    <h1><b>Seminar Tugas Akhir</b></h1>
 @stop
 
 @section('content')
@@ -24,14 +24,14 @@
             <div class="card-tools">
                 @can('CreateSeminar')
                     @if (Auth::user()->hasRole('admin'))
-                        <a href="{{ route('internship-seminar.create') }}" class="btn btn-dark btn-sm">
+                        <a href="{{ route('finalproject-seminar.create') }}" class="btn btn-dark btn-sm">
                             <i class="fas fa-fw fa-plus"></i>
-                            Ajukan Kerja Praktik
+                            Ajukan Seminar Tugas Akhir
                         </a>
                     @elseif (count($data) < 1)
-                        <a href="{{ route('internship-seminar.create') }}" class="btn btn-dark btn-sm">
+                        <a href="{{ route('finalproject-seminar.create') }}" class="btn btn-dark btn-sm">
                             <i class="fas fa-fw fa-plus"></i>
-                            Ajukan Kerja Praktik
+                            Ajukan Seminar Tugas Akhir
                         </a>
                     @endif
                 @endcan
@@ -39,7 +39,7 @@
         </div>
         <div class="card-body pt-1 px-3">
             @can('ApproveDenySeminar')
-                <form action="{{ route('internship-seminar.list') }}" class="card-tools float-right">
+                <form action="{{ route('finalproject-seminar.list') }}" class="card-tools float-right">
                     <div class="input-group input-group-sm" style="width: 150px;">
                         <input type="text" name="keyword" class="form-control float-right" placeholder="Search">
 
@@ -60,10 +60,10 @@
                             <th>Nama</th>
                         @endif
                         <th>Judul</th>
-                        <th style="width: 150px">Tempat</th>
-                        <th style="width: 100px">Mulai</th>
-                        <th style="width: 100px">Berakhir</th>
                         <th style="width: 150px">Jadwal Seminar</th>
+                        <th>Penguji 1</th>
+                        <th>Penguji 2</th>
+                        <th>Penguji 3</th>
                         <th class="text-center">Status</th>
                         <th class="text-center" style="min-width: 230px">Action</th>
                     </tr>
@@ -78,13 +78,6 @@
                                     <td>{{ $item->name }}</td>
                                 @endif
                                 <td>{{ $item->title }}</td>
-                                <td>{{ $item->company_name }}</td>
-                                <td>
-                                    {{ \Carbon\Carbon::parse($item->start_date)->timezone(session('timezone', 'Asia/Jakarta'))->format('d M Y') }}
-                                </td>
-                                <td>
-                                    {{ \Carbon\Carbon::parse($item->end_date)->timezone(session('timezone', 'Asia/Jakarta'))->format('d M Y') }}
-                                </td>
                                 <td>
                                     @if ($item->schedule)
                                         {{ \Carbon\Carbon::parse($item->schedule)->timezone(session('timezone', 'Asia/Jakarta'))->format('d M Y H:i') }}
@@ -92,6 +85,9 @@
                                         <i>Menunggu Jadwal</i>
                                     @endif
                                 </td>
+                                <td>{{ $item->examiner1 }}</td>
+                                <td>{{ $item->examiner2 }}</td>
+                                <td>{{ $item->examiner3 }}</td>
                                 <td class="text-center">
                                     @if ($item->status == 0)
                                         <span class="badge bg-info">Submited</span>
@@ -104,7 +100,7 @@
                                 <td class="text-center">
                                     {{-- @can('ApproveDenySeminar')
                                         @if ($item->status == 0)
-                                            <form action="{{ route('internship-seminar.approve', [$item->id]) }}" method="post"
+                                            <form action="{{ route('finalproject-seminar.approve', [$item->id]) }}" method="post"
                                                 class="d-inline-block">
                                                 @csrf
                                                 {{ method_field('patch') }}
@@ -122,7 +118,7 @@
                                     @endcan --}}
                                     @can('EditSeminarStudent')
                                         @if ($item->status != 1)
-                                            <a href="{{ route('internship-seminar.edit', [$item->id]) }}"
+                                            <a href="{{ route('finalproject-seminar.edit', [$item->id]) }}"
                                                 class="btn btn-warning btn-xs px-3">
                                                 <i class="fas fa-fw fa-pencil-alt"></i>
                                                 Edit
@@ -130,13 +126,13 @@
                                         @endif
                                     @endcan
                                     @can('EditSeminar')
-                                        <a href="{{ route('internship-seminar.edit', [$item->id]) }}"
+                                        <a href="{{ route('finalproject-seminar.edit', [$item->id]) }}"
                                             class="btn btn-warning btn-xs px-3">
                                             <i class="fas fa-fw fa-pencil-alt"></i>
                                             Edit
                                         </a>
                                     @endcan
-                                    <a href="{{ route('internship-seminar.detail', [$item->id]) }}"
+                                    <a href="{{ route('finalproject-seminar.detail', [$item->id]) }}"
                                         class="btn btn-info btn-xs px-3">
                                         Detail
                                     </a>
@@ -174,7 +170,7 @@
     <div class="modal fade" id="modal-deny">
         <div class="modal-dialog">
             <div class="modal-content">
-                <form action="{{ route('internship-seminar.deny', ['id' => ':id']) }}" method="post">
+                <form action="{{ route('finalproject-seminar.deny', ['id' => ':id']) }}" method="post">
                     @csrf
                     {{ method_field('patch') }}
                     <div class="modal-header">
@@ -210,7 +206,7 @@
                 var seminarId = $(this).data('id');
                 $('#seminar-id').val(seminarId);
 
-                var formAction = "{{ route('internship-seminar.deny', ['id' => ':id']) }}";
+                var formAction = "{{ route('finalproject-seminar.deny', ['id' => ':id']) }}";
                 formAction = formAction.replace(':id', seminarId);
                 $('#modal-deny form').attr('action', formAction);
 

@@ -26,12 +26,12 @@
                     @if (Auth::user()->hasRole('admin'))
                         <a href="{{ route('internship-seminar.create') }}" class="btn btn-dark btn-sm">
                             <i class="fas fa-fw fa-plus"></i>
-                            Ajukan Kerja Praktik
+                            Ajukan Seminar Kerja Praktik
                         </a>
                     @elseif (count($data) < 1)
                         <a href="{{ route('internship-seminar.create') }}" class="btn btn-dark btn-sm">
                             <i class="fas fa-fw fa-plus"></i>
-                            Ajukan Kerja Praktik
+                            Ajukan Seminar Kerja Praktik
                         </a>
                     @endif
                 @endcan
@@ -61,9 +61,9 @@
                         @endif
                         <th>Judul</th>
                         <th style="width: 150px">Tempat</th>
-                        <th style="width: 100px">Mulai</th>
-                        <th style="width: 100px">Berakhir</th>
                         <th style="width: 150px">Jadwal Seminar</th>
+                        <th style="width: 100px">Penguji 1</th>
+                        <th style="width: 100px">Penguji 2</th>
                         <th class="text-center">Status</th>
                         <th class="text-center" style="min-width: 230px">Action</th>
                     </tr>
@@ -80,18 +80,14 @@
                                 <td>{{ $item->title }}</td>
                                 <td>{{ $item->company_name }}</td>
                                 <td>
-                                    {{ \Carbon\Carbon::parse($item->start_date)->timezone(session('timezone', 'Asia/Jakarta'))->format('d M Y') }}
-                                </td>
-                                <td>
-                                    {{ \Carbon\Carbon::parse($item->end_date)->timezone(session('timezone', 'Asia/Jakarta'))->format('d M Y') }}
-                                </td>
-                                <td>
                                     @if ($item->schedule)
                                         {{ \Carbon\Carbon::parse($item->schedule)->timezone(session('timezone', 'Asia/Jakarta'))->format('d M Y H:i') }}
                                     @else
                                         <i>Menunggu Jadwal</i>
                                     @endif
                                 </td>
+                                <td>{{ $item->examiner1 }}</td>
+                                <td>{{ $item->examiner2 }}</td>
                                 <td class="text-center">
                                     @if ($item->status == 0)
                                         <span class="badge bg-info">Submited</span>

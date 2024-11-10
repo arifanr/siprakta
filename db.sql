@@ -218,7 +218,7 @@ create table internship_seminar
     updated_at      timestamp
 );
 
-create table final_project
+create table final_project_seminar
 (
     id              bigserial   primary key,
     title           varchar(512) not null,
@@ -228,7 +228,8 @@ create table final_project
     mentor2_id       bigint,
     transcript_id   bigint       not null,
     krs_id          bigint       not null,
-    report_id     bigint,
+    registration_id bigint       not null,
+    report_id     bigint not null,
     examiner1_id     bigint,
     examiner2_id     bigint,
     examiner3_id     bigint,

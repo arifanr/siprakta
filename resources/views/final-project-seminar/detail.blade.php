@@ -20,7 +20,7 @@
                     <div class="card-tools text-right">
                         @can('ApproveDenySeminar')
                             @if ($data->status == 0)
-                                <form action="{{ route('internship-seminar.approve', [$data->id]) }}" method="post"
+                                <form action="{{ route('finalproject-seminar.approve', [$data->id]) }}" method="post"
                                     class="d-inline-block">
                                     @csrf
                                     {{ method_field('patch') }}
@@ -38,7 +38,7 @@
                         @endcan
                         @can('EditSeminarStudent')
                             @if ($data->status != 1)
-                                <a href="{{ route('internship-seminar.edit', [$data->id]) }}"
+                                <a href="{{ route('finalproject-seminar.edit', [$data->id]) }}"
                                     class="btn btn-warning btn-sm px-3">
                                     <i class="fas fa-fw fa-pencil-alt"></i>
                                     Edit
@@ -46,12 +46,12 @@
                             @endif
                         @endcan
                         @can('EditSeminar')
-                            <a href="{{ route('internship-seminar.edit', [$data->id]) }}" class="btn btn-warning btn-sm px-3">
+                            <a href="{{ route('finalproject-seminar.edit', [$data->id]) }}" class="btn btn-warning btn-sm px-3">
                                 <i class="fas fa-fw fa-pencil-alt"></i>
                                 Edit
                             </a>
                         @endcan
-                        <a href="{{ route('internship-seminar.list') }}" class="btn btn-dark btn-sm">
+                        <a href="{{ route('finalproject-seminar.list') }}" class="btn btn-dark btn-sm">
                             Back
                         </a>
                     </div>
@@ -82,6 +82,11 @@
                                 <td>{{ $data->examiner2 }}</td>
                             </tr>
                             <tr>
+                                <td>Penguji 2</td>
+                                <td>:</td>
+                                <td>{{ $data->examiner3 }}</td>
+                            </tr>
+                            <tr>
                                 <td style="width: 20%">NPM</td>
                                 <td>:</td>
                                 <td>{{ $data->username }}</td>
@@ -92,9 +97,14 @@
                                 <td>{{ $data->name }}</td>
                             </tr>
                             <tr>
-                                <td>Pembimbing KP</td>
+                                <td>Pembimbing 1</td>
                                 <td>:</td>
-                                <td>{{ $data->mentor_name }}</td>
+                                <td>{{ $data->mentor_1 }}</td>
+                            </tr>
+                            <tr>
+                                <td>Pembimbing 2</td>
+                                <td>:</td>
+                                <td>{{ $data->mentor_2 }}</td>
                             </tr>
                             <tr>
                                 <td>Judul</td>
@@ -105,35 +115,6 @@
                                 <td>Deskripsi</td>
                                 <td>:</td>
                                 <td>{{ $data->description }}</td>
-                            </tr>
-                            <tr>
-                                <td>Nama Perusahaan</td>
-                                <td>:</td>
-                                <td>{{ $data->company_name }}</td>
-                            </tr>
-                            <tr>
-                                <td>Alamat Peusahaan</td>
-                                <td>:</td>
-                                <td>{{ $data->company_address }}</td>
-                            </tr>
-                            <tr>
-                                <td>No. Telepon Perusahaan</td>
-                                <td>:</td>
-                                <td>{{ $data->company_phone }}</td>
-                            </tr>
-                            <tr>
-                                <td>Tanggal Mulai</td>
-                                <td>:</td>
-                                <td>
-                                    {{ \Carbon\Carbon::parse($data->start_date)->timezone(session('timezone', 'Asia/Jakarta'))->format('d M Y') }}
-                                </td>
-                            </tr>
-                            <tr>
-                                <td>Tanggal Berakhir</td>
-                                <td>:</td>
-                                <td>
-                                    {{ \Carbon\Carbon::parse($data->end_date)->timezone(session('timezone', 'Asia/Jakarta'))->format('d M Y') }}
-                                </td>
                             </tr>
                             <tr>
                                 <td>Status</td>
@@ -227,24 +208,6 @@
                                     @endif
                                 </td>
                             </tr>
-                            <tr>
-                                <td>Lembar Penilaian Pembimbing</td>
-                                <td>:</td>
-                                <td>
-                                    @if ($data->assessment_url)
-                                        @if (explode('.', $data->assessment_url)[1] != 'pdf')
-                                            <a href="{{ asset($data->assessment_url) }}" target="_blank">
-                                                <img src="{{ asset($data->assessment_url) }}" alt=""
-                                                    height="100px">
-                                            </a>
-                                        @else
-                                            <a href="{{ asset($data->assessment_url) }}" target="_blank">
-                                                {{ $data->assessment_name }}
-                                            </a>
-                                        @endif
-                                    @endif
-                                </td>
-                            </tr>
                         </tbody>
                     </table>
                 </div>
@@ -260,7 +223,7 @@
     <div class="modal fade" id="modal-deny">
         <div class="modal-dialog">
             <div class="modal-content">
-                <form action="{{ route('internship-seminar.deny', ['id' => $data->id]) }}" method="post">
+                <form action="{{ route('finalproject-seminar.deny', ['id' => $data->id]) }}" method="post">
                     @csrf
                     {{ method_field('patch') }}
                     <div class="modal-header">

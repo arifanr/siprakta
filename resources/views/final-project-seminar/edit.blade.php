@@ -18,12 +18,12 @@
                 <div class="card-header d-flex align-items-center justify-content-between">
                     <h3 class="card-title mb-0">Ajukan Kerja Praktik</h3>
                     <div class="card-tools text-right">
-                        <a href="{{ route('internship-seminar.list') }}" class="btn btn-dark btn-sm">
+                        <a href="{{ route('finalproject-seminar.list') }}" class="btn btn-dark btn-sm">
                             Back
                         </a>
                     </div>
                 </div>
-                <form class="form-horizontal" action="{{ route('internship-seminar.update', $id) }}" method="POST"
+                <form class="form-horizontal" action="{{ route('finalproject-seminar.update', $id) }}" method="POST"
                     enctype="multipart/form-data">
                     @csrf
                     {{ method_field('patch') }}
@@ -31,20 +31,40 @@
                     <input type="hidden" name="krs_id" value="{{ $data->krs_id }}">
                     <input type="hidden" name="registration_id" value="{{ $data->registration_id }}">
                     <input type="hidden" name="report_id" value="{{ $data->report_id }}">
-                    <input type="hidden" name="assessment_sheet_id" value="{{ $data->assessment_sheet_id }}">
-                    <input type="hidden" name="mentor_id" value="{{ $data->mentor_id }}">
+                    <input type="hidden" name="mentor1_id" value="{{ $data->mentor1_id }}">
+                    <input type="hidden" name="mentor2_id" value="{{ $data->mentor2_id }}">
                     <input type="hidden" name="examiner1_id" value="{{ $data->examiner1_id }}">
                     <input type="hidden" name="examiner2_id" value="{{ $data->examiner2_id }}">
+                    <input type="hidden" name="examiner3_id" value="{{ $data->examiner3_id }}">
                     <input type="hidden" name="schedule_old" value="{{ $data->schedule }}">
                     <div class="card-body">
                         <div class="form-group row">
-                            <label for="" class="col-sm-3 col-form-label">Pembimbing KP</label>
+                            <label for="" class="col-sm-3 col-form-label">
+                                Pembimbing 1
+                                <span class="text-red">*</span>
+                            </label>
                             <div class="col-sm-9">
-                                <select class="form-control select2bs4 w-full" name="mentor">
-                                    <option value="">-- Pembimbing KP --</option>
-                                    @foreach ($mentorInternships as $item)
+                                <select class="form-control select2bs4 w-full" name="mentor_1">
+                                    <option value="">-- Pembimbing TA --</option>
+                                    @foreach ($mentors as $item)
                                         <option value="{{ $item->id }}"
-                                            {{ $data->mentor_id == $item->id ? 'selected' : '' }}>{{ $item->name }}
+                                            {{ $data->mentor1_id == $item->id ? 'selected' : '' }}>{{ $item->name }}
+                                        </option>
+                                    @endforeach
+                                </select>
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label for="" class="col-sm-3 col-form-label">
+                                Pembimbing 2
+                                <span class="text-red">*</span>
+                            </label>
+                            <div class="col-sm-9">
+                                <select class="form-control select2bs4 w-full" name="mentor_2">
+                                    <option value="">-- Pembimbing TA --</option>
+                                    @foreach ($mentors as $item)
+                                        <option value="{{ $item->id }}"
+                                            {{ $data->mentor2_id == $item->id ? 'selected' : '' }}>{{ $item->name }}
                                         </option>
                                     @endforeach
                                 </select>
@@ -64,71 +84,6 @@
                             <label for="" class="col-sm-3 col-form-label">Deskripsi</label>
                             <div class="col-sm-9">
                                 <textarea class="form-control" name="description" rows="5">{{ $data->description }}</textarea>
-                            </div>
-                        </div>
-                        <div class="form-group row">
-                            <label for="" class="col-sm-3 col-form-label">
-                                Nama Perusahaan
-                                <span class="text-red">*</span>
-                            </label>
-                            <div class="col-sm-9">
-                                <input type="text" class="form-control" name="company_name"
-                                    value="{{ $data->company_name }}" required>
-                            </div>
-                        </div>
-                        <div class="form-group row">
-                            <label for="" class="col-sm-3 col-form-label">
-                                Alamat Perusahaan
-                                <span class="text-red">*</span>
-                            </label>
-                            <div class="col-sm-9">
-                                <input type="text" class="form-control" name="company_address"
-                                    value="{{ $data->company_address }}" required>
-                            </div>
-                        </div>
-                        <div class="form-group row">
-                            <label for="" class="col-sm-3 col-form-label">
-                                No. Telepon Perusahaan
-                                <span class="text-red">*</span>
-                            </label>
-                            <div class="col-sm-9">
-                                <input type="number" class="form-control" name="company_phone" pattern="\d*"
-                                    oninput="this.value = this.value.slice(0, 13);" value="{{ $data->company_phone }}"
-                                    required>
-                            </div>
-                        </div>
-                        <div class="form-group row">
-                            <label for="" class="col-sm-3 col-form-label">
-                                Tanggal Mulai
-                                <span class="text-red">*</span>
-                            </label>
-                            <div class="col-sm-9">
-                                <div class="input-group">
-                                    <div class="input-group-prepend">
-                                        <span class="input-group-text"><i class="far fa-calendar-alt"></i></span>
-                                    </div>
-                                    <input type="text" class="form-control" name="start_date" id="datemask1"
-                                        data-inputmask-alias="datetime" data-inputmask-inputformat="dd/mm/yyyy" data-mask
-                                        value="{{ \Carbon\Carbon::parse($data->start_date)->timezone(session('timezone', 'Asia/Jakarta'))->format('d/m/Y') }}"
-                                        required>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="form-group row">
-                            <label for="" class="col-sm-3 col-form-label">
-                                Tanggal Berakhir
-                                <span class="text-red">*</span>
-                            </label>
-                            <div class="col-sm-9">
-                                <div class="input-group">
-                                    <div class="input-group-prepend">
-                                        <span class="input-group-text"><i class="far fa-calendar-alt"></i></span>
-                                    </div>
-                                    <input type="text" class="form-control" name="end_date" id="datemask2"
-                                        data-inputmask-alias="datetime" data-inputmask-inputformat="dd/mm/yyyy" data-mask
-                                        value="{{ \Carbon\Carbon::parse($data->end_date)->timezone(session('timezone', 'Asia/Jakarta'))->format('d/m/Y') }}"
-                                        required>
-                                </div>
                             </div>
                         </div>
                         <div class="form-group row">
@@ -232,31 +187,6 @@
                                 @endif
                             </div>
                         </div>
-                        <div class="form-group row">
-                            <label for="" class="col-sm-3 col-form-label">
-                                Lembar Penilaian KP
-                            </label>
-                            <div class="col-sm-9">
-                                <div class="input-group">
-                                    <div class="custom-file">
-                                        <input type="file" class="custom-file-input" id="exampleInputFile"
-                                            name="assessment_sheet" accept=".pdf, .webp, .png, .jpeg, .jpg">
-                                        <label class="custom-file-label" for="exampleInputFile">Choose file</label>
-                                    </div>
-                                </div>
-                                @if ($data->assessment_url)
-                                    @if (explode('.', $data->assessment_url)[1] != 'pdf')
-                                        <a href="{{ asset($data->assessment_url) }}" target="_blank">
-                                            <img src="{{ asset($data->assessment_url) }}" alt="" height="100px">
-                                        </a>
-                                    @else
-                                        <a href="{{ asset($data->assessment_url) }}" target="_blank">
-                                            {{ $data->assessment_name }}
-                                        </a>
-                                    @endif
-                                @endif
-                            </div>
-                        </div>
                         @if (!Auth::user()->hasRole('student'))
                             <div class="form-group row">
                                 <label for="" class="col-sm-3 col-form-label">
@@ -277,10 +207,10 @@
                                 </div>
                             </div>
                             <div class="form-group row">
-                                <label for="" class="col-sm-3 col-form-label">Penguji KP 1</label>
+                                <label for="" class="col-sm-3 col-form-label">Penguji 1</label>
                                 <div class="col-sm-9">
                                     <select class="form-control select2bs4 w-full" name="examiner1">
-                                        <option value="">-- Penguji KP --</option>
+                                        <option value="">-- Penguji TA --</option>
                                         @foreach ($examiners as $item)
                                             <option value="{{ $item->id }}"
                                                 {{ $data->examiner1_id == $item->id ? 'selected' : '' }}>{{ $item->name }}
@@ -290,13 +220,26 @@
                                 </div>
                             </div>
                             <div class="form-group row">
-                                <label for="" class="col-sm-3 col-form-label">Penguji KP 2</label>
+                                <label for="" class="col-sm-3 col-form-label">Penguji 2</label>
                                 <div class="col-sm-9">
                                     <select class="form-control select2bs4 w-full" name="examiner2">
-                                        <option value="">-- Penguji KP --</option>
+                                        <option value="">-- Penguji TA --</option>
                                         @foreach ($examiners as $item)
                                             <option value="{{ $item->id }}"
                                                 {{ $data->examiner2_id == $item->id ? 'selected' : '' }}>{{ $item->name }}
+                                            </option>
+                                        @endforeach
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="form-group row">
+                                <label for="" class="col-sm-3 col-form-label">Penguji 3</label>
+                                <div class="col-sm-9">
+                                    <select class="form-control select2bs4 w-full" name="examiner3">
+                                        <option value="">-- Penguji TA --</option>
+                                        @foreach ($examiners as $item)
+                                            <option value="{{ $item->id }}"
+                                                {{ $data->examiner3_id == $item->id ? 'selected' : '' }}>{{ $item->name }}
                                             </option>
                                         @endforeach
                                     </select>
@@ -306,7 +249,7 @@
                     </div>
                     <div class="card-footer">
                         <button type="submit" class="btn btn-info px-3">Submit</button>
-                        <a href="{{ route('internship-seminar.list') }}" class="btn btn-default float-right px-3">
+                        <a href="{{ route('finalproject-seminar.list') }}" class="btn btn-default float-right px-3">
                             Cancel
                         </a>
                     </div>

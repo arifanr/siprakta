@@ -34,7 +34,7 @@
                                     <option value="">-- Pembimbing TA --</option>
                                     @foreach ($mentors as $item)
                                         <option value="{{ $item->id }}"
-                                            {{ old('mentor') == $item->id ? 'selected' : '' }}>{{ $item->name }}</option>
+                                            {{ old('mentor_1') == $item->id ? 'selected' : '' }}>{{ $item->name }}</option>
                                     @endforeach
                                 </select>
                             </div>
@@ -46,7 +46,7 @@
                                     <option value="">-- Pembimbing TA --</option>
                                     @foreach ($mentors as $item)
                                         <option value="{{ $item->id }}"
-                                            {{ old('mentor') == $item->id ? 'selected' : '' }}>{{ $item->name }}</option>
+                                            {{ old('mentor_2') == $item->id ? 'selected' : '' }}>{{ $item->name }}</option>
                                     @endforeach
                                 </select>
                             </div>

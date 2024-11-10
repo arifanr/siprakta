@@ -1,9 +1,9 @@
 @extends('adminlte::page')
 
-@section('title', 'Kerja Praktik')
+@section('title', 'Seminar Kerja Praktik')
 
 @section('content_header')
-    <h1><b>Kerja Praktik</b></h1>
+    <h1><b>Seminar Kerja Praktik</b></h1>
 @stop
 
 @section('content')
@@ -16,21 +16,24 @@
         <div class="col-12 col-md-9">
             <div class="card card-info">
                 <div class="card-header d-flex align-items-center justify-content-between">
-                    <h3 class="card-title mb-0">Ajukan Kerja Praktik</h3>
+                    <h3 class="card-title mb-0">Ajukan Seminar Kerja Praktik</h3>
                     <div class="card-tools text-right">
-                        <a href="{{ route('internship.list') }}" class="btn btn-dark btn-sm">
+                        <a href="{{ route('internship-seminar.list') }}" class="btn btn-dark btn-sm">
                             Back
                         </a>
                     </div>
                 </div>
-                <form class="form-horizontal" action="{{ route('internship.save') }}" method="POST"
+                <form class="form-horizontal" action="{{ route('internship-seminar.save') }}" method="POST"
                     enctype="multipart/form-data">
                     @csrf
                     <div class="card-body">
                         <div class="form-group row">
-                            <label for="" class="col-sm-3 col-form-label">Pembimbing KP</label>
+                            <label for="" class="col-sm-3 col-form-label">
+                                Pembimbing KP
+                                <span class="text-red">*</span>
+                            </label>
                             <div class="col-sm-9">
-                                <select class="form-control select2bs4 w-full" name="mentor">
+                                <select class="form-control select2bs4 w-full" name="mentor" required>
                                     <option value="">-- Pembimbing KP --</option>
                                     @foreach ($mentorInternships as $item)
                                         <option value="{{ $item->id }}" {{ old('mentor') == $item->id ? 'selected' : '' }}>{{ $item->name }}</option>
@@ -113,24 +116,20 @@
                                 </div>
                             </div>
                         </div>
+                        
                         <div class="form-group row">
                             <label for="" class="col-sm-3 col-form-label">
-                                Surat Pernyataan
+                                Formulir Pendaftaran
                                 <span class="text-red">*</span>
                             </label>
                             <div class="col-sm-9">
                                 <div class="input-group">
                                     <div class="custom-file">
                                         <input type="file" class="custom-file-input" id="exampleInputFile"
-                                            name="statement" accept=".pdf, .webp, .png, .jpeg, .jpg">
+                                            name="registration" accept=".pdf, .webp, .png, .jpeg, .jpg" required>
                                         <label class="custom-file-label" for="exampleInputFile">Choose file</label>
                                     </div>
                                 </div>
-                                @error('statement')
-                                    <span class="invalid-feedback" role="alert">
-                                        <strong>{{ $message }}</strong>
-                                    </span>
-                                @enderror
                             </div>
                         </div>
                         <div class="form-group row">
@@ -146,11 +145,6 @@
                                         <label class="custom-file-label" for="exampleInputFile2">Choose file</label>
                                     </div>
                                 </div>
-                                @error('krs')
-                                    <span class="invalid-feedback" role="alert">
-                                        <strong>{{ $message }}</strong>
-                                    </span>
-                                @enderror
                             </div>
                         </div>
                         <div class="form-group row">
@@ -162,21 +156,86 @@
                                 <div class="input-group">
                                     <div class="custom-file">
                                         <input type="file" class="custom-file-input" id="exampleInputFile3"
-                                            name="transcript" accept=".pdf, .webp, .png, .jpeg, .jpg" required>
+                                            name="transcript" accept=".pdf, .webp, .png, .jpeg, .jpg" value="{{ old('transcript') }}" required>
                                         <label class="custom-file-label" for="exampleInputFile3">Choose file</label>
                                     </div>
                                 </div>
-                                @error('transcript')
-                                    <span class="invalid-feedback" role="alert">
-                                        <strong>{{ $message }}</strong>
-                                    </span>
-                                @enderror
                             </div>
                         </div>
+                        <div class="form-group row">
+                            <label for="" class="col-sm-3 col-form-label">
+                                Laporan KP
+                                <span class="text-red">*</span>
+                            </label>
+                            <div class="col-sm-9">
+                                <div class="input-group">
+                                    <div class="custom-file">
+                                        <input type="file" class="custom-file-input" id="exampleInputFile"
+                                            name="report" accept=".pdf, .webp, .png, .jpeg, .jpg" required>
+                                        <label class="custom-file-label" for="exampleInputFile">Choose file</label>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label for="" class="col-sm-3 col-form-label">
+                                Lembar Penilaian KP
+                                <span class="text-red">*</span>
+                            </label>
+                            <div class="col-sm-9">
+                                <div class="input-group">
+                                    <div class="custom-file">
+                                        <input type="file" class="custom-file-input" id="exampleInputFile"
+                                            name="assessment_sheet" accept=".pdf, .webp, .png, .jpeg, .jpg" required>
+                                        <label class="custom-file-label" for="exampleInputFile">Choose file</label>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        @if (!Auth::user()->hasRole('student'))
+                            <div class="form-group row">
+                                <label for="" class="col-sm-3 col-form-label">
+                                    Jadwal Seminar
+                                    <span class="text-red">*</span>
+                                </label>
+                                <div class="col-sm-9">
+                                    <div class="input-group">
+                                        <div class="input-group-prepend">
+                                            <span class="input-group-text"><i class="far fa-calendar-alt"></i></span>
+                                        </div>
+                                        <input type="text" class="form-control" name="schedule"
+                                            data-inputmask-alias="datetime" data-inputmask-inputformat="dd/mm/yyyy HH:MM" data-mask
+                                            value="{{ old('end_date') }}" required>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="form-group row">
+                                <label for="" class="col-sm-3 col-form-label">Penguji KP 1</label>
+                                <div class="col-sm-9">
+                                    <select class="form-control select2bs4 w-full" name="examiner1">
+                                        <option value="">-- Penguji KP --</option>
+                                        @foreach ($examiners as $item)
+                                            <option value="{{ $item->id }}" {{ old('examiner1') == $item->id ? 'selected' : '' }}>{{ $item->name }}</option>
+                                        @endforeach
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="form-group row">
+                                <label for="" class="col-sm-3 col-form-label">Penguji KP 2</label>
+                                <div class="col-sm-9">
+                                    <select class="form-control select2bs4 w-full" name="examiner2">
+                                        <option value="">-- Penguji KP --</option>
+                                        @foreach ($examiners as $item)
+                                            <option value="{{ $item->id }}" {{ old('examiner2') == $item->id ? 'selected' : '' }}>{{ $item->name }}</option>
+                                        @endforeach
+                                    </select>
+                                </div>
+                            </div>
+                        @endif
                     </div>
                     <div class="card-footer">
                         <button type="submit" class="btn btn-info px-3">Submit</button>
-                        <a href="{{ route('internship.list') }}" class="btn btn-default float-right px-3">
+                        <a href="{{ route('internship-seminar.list') }}" class="btn btn-default float-right px-3">
                             Cancel
                         </a>
                     </div>

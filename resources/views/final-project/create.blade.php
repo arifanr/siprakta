@@ -1,6 +1,6 @@
 @extends('adminlte::page')
 
-@section('title', 'Dashboard')
+@section('title', 'Tugas Akhir')
 
 @section('content_header')
     <h1><b>Tugas Akhir</b></h1>
@@ -28,9 +28,21 @@
                     @csrf
                     <div class="card-body">
                         <div class="form-group row">
-                            <label for="" class="col-sm-3 col-form-label">Pembimbing TA</label>
+                            <label for="" class="col-sm-3 col-form-label">Pembimbing 1</label>
                             <div class="col-sm-9">
-                                <select class="form-control select2bs4 w-full" name="mentor">
+                                <select class="form-control select2bs4 w-full" name="mentor_1">
+                                    <option value="">-- Pembimbing TA --</option>
+                                    @foreach ($mentors as $item)
+                                        <option value="{{ $item->id }}"
+                                            {{ old('mentor') == $item->id ? 'selected' : '' }}>{{ $item->name }}</option>
+                                    @endforeach
+                                </select>
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label for="" class="col-sm-3 col-form-label">Pembimbing 2</label>
+                            <div class="col-sm-9">
+                                <select class="form-control select2bs4 w-full" name="mentor_2">
                                     <option value="">-- Pembimbing TA --</option>
                                     @foreach ($mentors as $item)
                                         <option value="{{ $item->id }}"

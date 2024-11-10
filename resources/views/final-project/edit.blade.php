@@ -1,6 +1,6 @@
 @extends('adminlte::page')
 
-@section('title', 'Dashboard')
+@section('title', 'Tugas Akhir')
 
 @section('content_header')
     <h1><b>Tugas Akhir</b></h1>
@@ -30,16 +30,30 @@
                     <input type="hidden" name="transcript_id" value="{{ $data->transcript_id }}">
                     <input type="hidden" name="krs_id" value="{{ $data->krs_id }}">
                     <input type="hidden" name="proposal_id" value="{{ $data->proposal_id }}">
-                    <input type="hidden" name="mentor_id" value="{{ $data->mentor_id }}">
+                    <input type="hidden" name="mentor1_id" value="{{ $data->mentor1_id }}">
+                    <input type="hidden" name="mentor2_id" value="{{ $data->mentor2_id }}">
                     <div class="card-body">
                         <div class="form-group row">
-                            <label for="" class="col-sm-3 col-form-label">Pembimbing TA</label>
+                            <label for="" class="col-sm-3 col-form-label">Pembimbing 1</label>
                             <div class="col-sm-9">
-                                <select class="form-control select2bs4 w-full" name="mentor">
+                                <select class="form-control select2bs4 w-full" name="mentor_1">
                                     <option value="">-- Pembimbing TA --</option>
                                     @foreach ($mentors as $item)
                                         <option value="{{ $item->id }}"
-                                            {{ $data->mentor_id == $item->id ? 'selected' : '' }}>{{ $item->name }}
+                                            {{ $data->mentor1_id == $item->id ? 'selected' : '' }}>{{ $item->name }}
+                                        </option>
+                                    @endforeach
+                                </select>
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label for="" class="col-sm-3 col-form-label">Pembimbing 2</label>
+                            <div class="col-sm-9">
+                                <select class="form-control select2bs4 w-full" name="mentor_2">
+                                    <option value="">-- Pembimbing TA --</option>
+                                    @foreach ($mentors as $item)
+                                        <option value="{{ $item->id }}"
+                                            {{ $data->mentor2_id == $item->id ? 'selected' : '' }}>{{ $item->name }}
                                         </option>
                                     @endforeach
                                 </select>

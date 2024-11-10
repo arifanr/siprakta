@@ -60,6 +60,8 @@
                             <th>Nama</th>
                         @endif
                         <th>Judul</th>
+                        <th>Pembimbing 1</th>
+                        <th>Pembimbing 2</th>
                         <th class="text-center">Status</th>
                         <th class="text-center" style="min-width: 230px">Action</th>
                     </tr>
@@ -74,6 +76,8 @@
                                     <td>{{ $item->name }}</td>
                                 @endif
                                 <td>{{ $item->title }}</td>
+                                <td>{{ $item->mentor_1 }}</td>
+                                <td>{{ $item->mentor_2 }}</td>
                                 <td class="text-center">
                                     @if ($item->status == 0)
                                         <span class="badge bg-info">Submited</span>

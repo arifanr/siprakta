@@ -1,9 +1,9 @@
 @extends('adminlte::page')
 
-@section('title', 'Kerja Praktik')
+@section('title', 'Seminar Kerja Praktik')
 
 @section('content_header')
-    <h1><b>Kerja Praktik</b></h1>
+    <h1><b>Seminar Kerja Praktik</b></h1>
 @stop
 
 @section('content')
@@ -16,11 +16,11 @@
         <div class="col-12 col-md-12">
             <div class="card card-info">
                 <div class="card-header d-flex align-items-center justify-content-between">
-                    <h3 class="card-title mb-0">Detail Kerja Praktik</h3>
+                    <h3 class="card-title mb-0">Detail Seminar Kerja Praktik</h3>
                     <div class="card-tools text-right">
-                        @can('ApproveDenyInternship')
+                        @can('ApproveDenySeminar')
                             @if ($data->status == 0)
-                                <form action="{{ route('internship.approve', [$data->id]) }}" method="post"
+                                <form action="{{ route('internship-seminar.approve', [$data->id]) }}" method="post"
                                     class="d-inline-block">
                                     @csrf
                                     {{ method_field('patch') }}
@@ -36,15 +36,22 @@
                                 </button>
                             @endif
                         @endcan
-                        @can('EditInternship')
+                        @can('EditSeminarStudent')
                             @if ($data->status != 1)
-                                <a href="{{ route('internship.edit', [$data->id]) }}" class="btn btn-warning btn-sm px-3">
+                                <a href="{{ route('internship-seminar.edit', [$data->id]) }}"
+                                    class="btn btn-warning btn-sm px-3">
                                     <i class="fas fa-fw fa-pencil-alt"></i>
                                     Edit
                                 </a>
                             @endif
                         @endcan
-                        <a href="{{ route('internship.list') }}" class="btn btn-dark btn-sm">
+                        @can('EditSeminar')
+                            <a href="{{ route('internship-seminar.edit', [$data->id]) }}" class="btn btn-warning btn-sm px-3">
+                                <i class="fas fa-fw fa-pencil-alt"></i>
+                                Edit
+                            </a>
+                        @endcan
+                        <a href="{{ route('internship-seminar.list') }}" class="btn btn-dark btn-sm">
                             Back
                         </a>
                     </div>
@@ -52,6 +59,28 @@
                 <div class="card-body">
                     <table class="table">
                         <tbody>
+                            <tr>
+                                <td>Jadwal Seminar</td>
+                                <td>:</td>
+                                <td>
+                                    @if ($data->schedule)
+                                        {{ \Carbon\Carbon::parse($data->schedule)->timezone(session('timezone', 'Asia/Jakarta'))->format('d M Y H:i') }}
+                                        WIB
+                                    @else
+                                        <i>Menunggu Jadwal</i>
+                                    @endif
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>Penguji 1</td>
+                                <td>:</td>
+                                <td>{{ $data->examiner1 }}</td>
+                            </tr>
+                            <tr>
+                                <td>Penguji 2</td>
+                                <td>:</td>
+                                <td>{{ $data->examiner2 }}</td>
+                            </tr>
                             <tr>
                                 <td style="width: 20%">NPM</td>
                                 <td>:</td>
@@ -129,17 +158,18 @@
                                 </tr>
                             @endif
                             <tr>
-                                <td>Surat Pernyataan</td>
+                                <td>Formulir Pendaftaran</td>
                                 <td>:</td>
                                 <td>
-                                    @if ($data->statement_url)
-                                        @if (explode('.', $data->statement_url)[1] != 'pdf')
-                                            <a href="{{ asset($data->statement_url) }}" target="_blank">
-                                                <img src="{{ asset($data->statement_url) }}" alt="" height="150px">
+                                    @if ($data->registration_url)
+                                        @if (explode('.', $data->registration_url)[1] != 'pdf')
+                                            <a href="{{ asset($data->registration_url) }}" target="_blank">
+                                                <img src="{{ asset($data->registration_url) }}" alt=""
+                                                    height="150px">
                                             </a>
                                         @else
-                                            <a href="{{ asset($data->statement_url) }}" target="_blank">
-                                                {{ $data->statement_name }}
+                                            <a href="{{ asset($data->registration_url) }}" target="_blank">
+                                                {{ $data->registration_name }}
                                             </a>
                                         @endif
                                     @endif
@@ -180,6 +210,41 @@
                                     @endif
                                 </td>
                             </tr>
+                            <tr>
+                                <td>Laporan KP</td>
+                                <td>:</td>
+                                <td>
+                                    @if ($data->report_url)
+                                        @if (explode('.', $data->report_url)[1] != 'pdf')
+                                            <a href="{{ asset($data->report_url) }}" target="_blank">
+                                                <img src="{{ asset($data->report_url) }}" alt="" height="100px">
+                                            </a>
+                                        @else
+                                            <a href="{{ asset($data->report_url) }}" target="_blank">
+                                                {{ $data->report_name }}
+                                            </a>
+                                        @endif
+                                    @endif
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>Lembar Penilaian Pembimbing</td>
+                                <td>:</td>
+                                <td>
+                                    @if ($data->assessment_url)
+                                        @if (explode('.', $data->assessment_url)[1] != 'pdf')
+                                            <a href="{{ asset($data->assessment_url) }}" target="_blank">
+                                                <img src="{{ asset($data->assessment_url) }}" alt=""
+                                                    height="100px">
+                                            </a>
+                                        @else
+                                            <a href="{{ asset($data->assessment_url) }}" target="_blank">
+                                                {{ $data->assessment_name }}
+                                            </a>
+                                        @endif
+                                    @endif
+                                </td>
+                            </tr>
                         </tbody>
                     </table>
                 </div>
@@ -195,7 +260,7 @@
     <div class="modal fade" id="modal-deny">
         <div class="modal-dialog">
             <div class="modal-content">
-                <form action="{{ route('internship.deny', ['id' => $data->id]) }}" method="post">
+                <form action="{{ route('internship-seminar.deny', ['id' => $data->id]) }}" method="post">
                     @csrf
                     {{ method_field('patch') }}
                     <div class="modal-header">

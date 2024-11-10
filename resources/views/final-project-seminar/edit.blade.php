@@ -18,19 +18,24 @@
                 <div class="card-header d-flex align-items-center justify-content-between">
                     <h3 class="card-title mb-0">Ajukan Kerja Praktik</h3>
                     <div class="card-tools text-right">
-                        <a href="{{ route('internship.list') }}" class="btn btn-dark btn-sm">
+                        <a href="{{ route('internship-seminar.list') }}" class="btn btn-dark btn-sm">
                             Back
                         </a>
                     </div>
                 </div>
-                <form class="form-horizontal" action="{{ route('internship.update', $id) }}" method="POST"
+                <form class="form-horizontal" action="{{ route('internship-seminar.update', $id) }}" method="POST"
                     enctype="multipart/form-data">
                     @csrf
                     {{ method_field('patch') }}
                     <input type="hidden" name="transcript_id" value="{{ $data->transcript_id }}">
                     <input type="hidden" name="krs_id" value="{{ $data->krs_id }}">
-                    <input type="hidden" name="statement_id" value="{{ $data->statement_id }}">
+                    <input type="hidden" name="registration_id" value="{{ $data->registration_id }}">
+                    <input type="hidden" name="report_id" value="{{ $data->report_id }}">
+                    <input type="hidden" name="assessment_sheet_id" value="{{ $data->assessment_sheet_id }}">
                     <input type="hidden" name="mentor_id" value="{{ $data->mentor_id }}">
+                    <input type="hidden" name="examiner1_id" value="{{ $data->examiner1_id }}">
+                    <input type="hidden" name="examiner2_id" value="{{ $data->examiner2_id }}">
+                    <input type="hidden" name="schedule_old" value="{{ $data->schedule }}">
                     <div class="card-body">
                         <div class="form-group row">
                             <label for="" class="col-sm-3 col-form-label">Pembimbing KP</label>
@@ -127,23 +132,24 @@
                             </div>
                         </div>
                         <div class="form-group row">
-                            <label for="" class="col-sm-3 col-form-label">Surat Pernyataan</label>
+                            <label for="" class="col-sm-3 col-form-label">Formulir Pendaftaran</label>
                             <div class="col-sm-9">
                                 <div class="input-group mb-2">
                                     <div class="custom-file">
                                         <input type="file" class="custom-file-input" id="exampleInputFile"
-                                            name="statement" accept=".pdf, .webp, .png, .jpeg, .jpg">
+                                            name="registration" accept=".pdf, .webp, .png, .jpeg, .jpg">
                                         <label class="custom-file-label" for="exampleInputFile">Choose file</label>
                                     </div>
                                 </div>
-                                @if ($data->statement_url)
-                                    @if (explode('.', $data->statement_url)[1] != 'pdf')
-                                        <a href="{{ asset($data->statement_url) }}" target="_blank">
-                                            <img src="{{ asset($data->statement_url) }}" alt="" height="150px">
+                                @if ($data->registration_url)
+                                    @if (explode('.', $data->registration_url)[1] != 'pdf')
+                                        <a href="{{ asset($data->registration_url) }}" target="_blank">
+                                            <img src="{{ asset($data->registration_url) }}" alt=""
+                                                height="150px">
                                         </a>
                                     @else
-                                        <a href="{{ asset($data->statement_url) }}" target="_blank">
-                                            {{ $data->statement_name }}
+                                        <a href="{{ asset($data->registration_url) }}" target="_blank">
+                                            {{ $data->registration_name }}
                                         </a>
                                     @endif
                                 @endif
@@ -201,10 +207,106 @@
                                 @endif
                             </div>
                         </div>
+                        <div class="form-group row">
+                            <label for="" class="col-sm-3 col-form-label">
+                                Laporan KP
+                            </label>
+                            <div class="col-sm-9">
+                                <div class="input-group">
+                                    <div class="custom-file">
+                                        <input type="file" class="custom-file-input" id="exampleInputFile"
+                                            name="report" accept=".pdf, .webp, .png, .jpeg, .jpg">
+                                        <label class="custom-file-label" for="exampleInputFile">Choose file</label>
+                                    </div>
+                                </div>
+                                @if ($data->report_url)
+                                    @if (explode('.', $data->report_url)[1] != 'pdf')
+                                        <a href="{{ asset($data->report_url) }}" target="_blank">
+                                            <img src="{{ asset($data->report_url) }}" alt="" height="100px">
+                                        </a>
+                                    @else
+                                        <a href="{{ asset($data->report_url) }}" target="_blank">
+                                            {{ $data->report_name }}
+                                        </a>
+                                    @endif
+                                @endif
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label for="" class="col-sm-3 col-form-label">
+                                Lembar Penilaian KP
+                            </label>
+                            <div class="col-sm-9">
+                                <div class="input-group">
+                                    <div class="custom-file">
+                                        <input type="file" class="custom-file-input" id="exampleInputFile"
+                                            name="assessment_sheet" accept=".pdf, .webp, .png, .jpeg, .jpg">
+                                        <label class="custom-file-label" for="exampleInputFile">Choose file</label>
+                                    </div>
+                                </div>
+                                @if ($data->assessment_url)
+                                    @if (explode('.', $data->assessment_url)[1] != 'pdf')
+                                        <a href="{{ asset($data->assessment_url) }}" target="_blank">
+                                            <img src="{{ asset($data->assessment_url) }}" alt="" height="100px">
+                                        </a>
+                                    @else
+                                        <a href="{{ asset($data->assessment_url) }}" target="_blank">
+                                            {{ $data->assessment_name }}
+                                        </a>
+                                    @endif
+                                @endif
+                            </div>
+                        </div>
+                        @if (!Auth::user()->hasRole('student'))
+                            <div class="form-group row">
+                                <label for="" class="col-sm-3 col-form-label">
+                                    Jadwal Seminar
+                                    <span class="text-red">*</span>
+                                </label>
+                                <div class="col-sm-9">
+                                    <div class="input-group">
+                                        <div class="input-group-prepend">
+                                            <span class="input-group-text"><i class="far fa-calendar-alt"></i></span>
+                                        </div>
+                                        <input type="text" class="form-control" name="schedule"
+                                            data-inputmask-alias="datetime" data-inputmask-inputformat="dd/mm/yyyy HH:MM"
+                                            data-mask
+                                            value="{{ $data->schedule ? \Carbon\Carbon::parse($data->schedule)->timezone(session('timezone', 'Asia/Jakarta'))->format('d/m/Y H:i') : '' }}"
+                                            required>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="form-group row">
+                                <label for="" class="col-sm-3 col-form-label">Penguji KP 1</label>
+                                <div class="col-sm-9">
+                                    <select class="form-control select2bs4 w-full" name="examiner1">
+                                        <option value="">-- Penguji KP --</option>
+                                        @foreach ($examiners as $item)
+                                            <option value="{{ $item->id }}"
+                                                {{ $data->examiner1_id == $item->id ? 'selected' : '' }}>{{ $item->name }}
+                                            </option>
+                                        @endforeach
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="form-group row">
+                                <label for="" class="col-sm-3 col-form-label">Penguji KP 2</label>
+                                <div class="col-sm-9">
+                                    <select class="form-control select2bs4 w-full" name="examiner2">
+                                        <option value="">-- Penguji KP --</option>
+                                        @foreach ($examiners as $item)
+                                            <option value="{{ $item->id }}"
+                                                {{ $data->examiner2_id == $item->id ? 'selected' : '' }}>{{ $item->name }}
+                                            </option>
+                                        @endforeach
+                                    </select>
+                                </div>
+                            </div>
+                        @endif
                     </div>
                     <div class="card-footer">
                         <button type="submit" class="btn btn-info px-3">Submit</button>
-                        <a href="{{ route('internship.list') }}" class="btn btn-default float-right px-3">
+                        <a href="{{ route('internship-seminar.list') }}" class="btn btn-default float-right px-3">
                             Cancel
                         </a>
                     </div>

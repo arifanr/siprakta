@@ -116,7 +116,7 @@ create table internship
     mentor_id       bigint,
     transcript_id   bigint       not null,
     krs_id          bigint       not null,
-    proposal_id     bigint,
+    statement_id     bigint not null,
     status          integer     DEFAULT 0 not null,
     created_by      varchar(64)  not null,
     created_at      timestamp    not null,
@@ -147,7 +147,8 @@ create table final_project
     title           varchar(512) not null,
     description     text,
     student_id      bigint       not null,
-    mentor_id       bigint,
+    mentor1_id       bigint,
+    mentor2_id       bigint,
     transcript_id   bigint       not null,
     krs_id          bigint       not null,
     proposal_id     bigint,
@@ -188,4 +189,53 @@ create table notification
     updated_by      varchar(64),
     updated_at      timestamp,
     CONSTRAINT fk_users FOREIGN KEY(users_id) REFERENCES users(id)
+);
+
+create table internship_seminar
+(
+    id              bigserial   primary key,
+    title           varchar(512) not null,
+    description     text,
+    company_name    varchar(128) not null,
+    company_address varchar(128) not null,
+    company_phone   varchar(128) not null,
+    start_date      timestamp    not null,
+    end_date        timestamp    not null,
+    student_id      bigint       not null,
+    mentor_id       bigint       not null,
+    transcript_id   bigint       not null,
+    krs_id          bigint       not null,
+    registration_id bigint       not null,
+    report_id       bigint       not null,
+    assessment_sheet_id bigint      not null,
+    examiner1_id     bigint,
+    examiner2_id     bigint,
+    schedule        timestamp,
+    status          integer     DEFAULT 0 not null,
+    created_by      varchar(64)  not null,
+    created_at      timestamp    not null,
+    updated_by      varchar(64),
+    updated_at      timestamp
+);
+
+create table final_project
+(
+    id              bigserial   primary key,
+    title           varchar(512) not null,
+    description     text,
+    student_id      bigint       not null,
+    mentor1_id       bigint,
+    mentor2_id       bigint,
+    transcript_id   bigint       not null,
+    krs_id          bigint       not null,
+    report_id     bigint,
+    examiner1_id     bigint,
+    examiner2_id     bigint,
+    examiner3_id     bigint,
+    schedule        timestamp,
+    status          integer     DEFAULT 0 not null,
+    created_by      varchar(64)  not null,
+    created_at      timestamp    not null,
+    updated_by      varchar(64),
+    updated_at      timestamp
 );

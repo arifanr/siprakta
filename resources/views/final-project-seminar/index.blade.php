@@ -1,9 +1,9 @@
 @extends('adminlte::page')
 
-@section('title', 'Kerja Praktik')
+@section('title', 'Seminar Kerja Praktik')
 
 @section('content_header')
-    <h1><b>Kerja Praktik</b></h1>
+    <h1><b>Seminar Kerja Praktik</b></h1>
 @stop
 
 @section('content')
@@ -22,14 +22,14 @@
     <div class="card card-info">
         <div class="card-header px-4 border-bottom-none">
             <div class="card-tools">
-                @can('CreateInternship')
+                @can('CreateSeminar')
                     @if (Auth::user()->hasRole('admin'))
-                        <a href="{{ route('internship.create') }}" class="btn btn-dark btn-sm">
+                        <a href="{{ route('internship-seminar.create') }}" class="btn btn-dark btn-sm">
                             <i class="fas fa-fw fa-plus"></i>
                             Ajukan Kerja Praktik
                         </a>
                     @elseif (count($data) < 1)
-                        <a href="{{ route('internship.create') }}" class="btn btn-dark btn-sm">
+                        <a href="{{ route('internship-seminar.create') }}" class="btn btn-dark btn-sm">
                             <i class="fas fa-fw fa-plus"></i>
                             Ajukan Kerja Praktik
                         </a>
@@ -38,8 +38,8 @@
             </div>
         </div>
         <div class="card-body pt-1 px-3">
-            @can('ApproveDenyInternship')
-                <form action="{{ route('internship.list') }}" class="card-tools float-right">
+            @can('ApproveDenySeminar')
+                <form action="{{ route('internship-seminar.list') }}" class="card-tools float-right">
                     <div class="input-group input-group-sm" style="width: 150px;">
                         <input type="text" name="keyword" class="form-control float-right" placeholder="Search">
 
@@ -63,6 +63,7 @@
                         <th style="width: 150px">Tempat</th>
                         <th style="width: 100px">Mulai</th>
                         <th style="width: 100px">Berakhir</th>
+                        <th style="width: 150px">Jadwal Seminar</th>
                         <th class="text-center">Status</th>
                         <th class="text-center" style="min-width: 230px">Action</th>
                     </tr>
@@ -84,6 +85,13 @@
                                 <td>
                                     {{ \Carbon\Carbon::parse($item->end_date)->timezone(session('timezone', 'Asia/Jakarta'))->format('d M Y') }}
                                 </td>
+                                <td>
+                                    @if ($item->schedule)
+                                        {{ \Carbon\Carbon::parse($item->schedule)->timezone(session('timezone', 'Asia/Jakarta'))->format('d M Y H:i') }}
+                                    @else
+                                        <i>Menunggu Jadwal</i>
+                                    @endif
+                                </td>
                                 <td class="text-center">
                                     @if ($item->status == 0)
                                         <span class="badge bg-info">Submited</span>
@@ -94,9 +102,9 @@
                                     @endif
                                 </td>
                                 <td class="text-center">
-                                    @can('ApproveDenyInternship')
+                                    {{-- @can('ApproveDenySeminar')
                                         @if ($item->status == 0)
-                                            <form action="{{ route('internship.approve', [$item->id]) }}" method="post"
+                                            <form action="{{ route('internship-seminar.approve', [$item->id]) }}" method="post"
                                                 class="d-inline-block">
                                                 @csrf
                                                 {{ method_field('patch') }}
@@ -111,17 +119,24 @@
                                                 Deny
                                             </button>
                                         @endif
-                                    @endcan
-                                    @can('EditInternship')
+                                    @endcan --}}
+                                    @can('EditSeminarStudent')
                                         @if ($item->status != 1)
-                                            <a href="{{ route('internship.edit', [$item->id]) }}"
+                                            <a href="{{ route('internship-seminar.edit', [$item->id]) }}"
                                                 class="btn btn-warning btn-xs px-3">
                                                 <i class="fas fa-fw fa-pencil-alt"></i>
                                                 Edit
                                             </a>
                                         @endif
                                     @endcan
-                                    <a href="{{ route('internship.detail', [$item->id]) }}"
+                                    @can('EditSeminar')
+                                        <a href="{{ route('internship-seminar.edit', [$item->id]) }}"
+                                            class="btn btn-warning btn-xs px-3">
+                                            <i class="fas fa-fw fa-pencil-alt"></i>
+                                            Edit
+                                        </a>
+                                    @endcan
+                                    <a href="{{ route('internship-seminar.detail', [$item->id]) }}"
                                         class="btn btn-info btn-xs px-3">
                                         Detail
                                     </a>
@@ -159,7 +174,7 @@
     <div class="modal fade" id="modal-deny">
         <div class="modal-dialog">
             <div class="modal-content">
-                <form action="{{ route('internship.deny', ['id' => ':id']) }}" method="post">
+                <form action="{{ route('internship-seminar.deny', ['id' => ':id']) }}" method="post">
                     @csrf
                     {{ method_field('patch') }}
                     <div class="modal-header">
@@ -192,11 +207,11 @@
     <script>
         $(document).ready(function() {
             $('.btn-deny').click(function() {
-                var internshipId = $(this).data('id');
-                $('#internship-id').val(internshipId);
+                var seminarId = $(this).data('id');
+                $('#seminar-id').val(seminarId);
 
-                var formAction = '{{ route('internship.deny', ['id' => ':id']) }}';
-                formAction = formAction.replace(':id', internshipId);
+                var formAction = "{{ route('internship-seminar.deny', ['id' => ':id']) }}";
+                formAction = formAction.replace(':id', seminarId);
                 $('#modal-deny form').attr('action', formAction);
 
                 $('#modal-deny').modal('show');

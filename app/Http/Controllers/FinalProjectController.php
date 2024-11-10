@@ -31,25 +31,32 @@ class FinalProjectController extends Controller
     public function index(Request $request)
     {
         $user = Auth::user();
-        $query = null;
+
+        $query = DB::table('final_project as fp')
+            ->select(
+                'fp.*',
+                'u.username',
+                'u.name',
+                DB::raw("(SELECT u.name 
+                    FROM users u
+                    WHERE u.id = fp.mentor1_id LIMIT 1) AS mentor_1"),
+                DB::raw("(SELECT u.name 
+                    FROM users u
+                    WHERE u.id = fp.mentor2_id LIMIT 1) AS mentor_2"),
+            )
+            ->leftjoin('users as u', 'u.id', '=', 'fp.student_id')
+
+            ->orderBy('created_at', 'asc');
 
         if ($user->hasRole('student')) {
-            $query = DB::table('final_project')
-                ->select('*')
-                ->where('student_id', '=', $user->id)
-                ->orderBy('created_at', 'asc');
-        } else {
-            $query = DB::table('final_project as fp')
-                ->select('fp.*', 'u.username', 'u.name')
-                ->leftjoin('users as u', 'u.id', '=', 'fp.student_id')
-                ->orderBy('created_at', 'asc');
+            $query->where('student_id', '=', $user->id);
+        }
 
-            if ($request->keyword) {
-                $query->where('u.username', 'ilike', "%" . $request->keyword . "%");
-                $query->orWhere('u.name', 'ilike', "%" . $request->keyword . "%");
-                $query->orWhere('fp.title', 'ilike', "%" . $request->keyword . "%");
-                $query->orWhere('fp.description', 'ilike', "%" . $request->keyword . "%");
-            }
+        if ($request->keyword) {
+            $query->where('u.username', 'ilike', "%" . $request->keyword . "%");
+            $query->orWhere('u.name', 'ilike', "%" . $request->keyword . "%");
+            $query->orWhere('fp.title', 'ilike', "%" . $request->keyword . "%");
+            $query->orWhere('fp.description', 'ilike', "%" . $request->keyword . "%");
         }
 
         $data = $query->paginate(15);
@@ -71,7 +78,10 @@ class FinalProjectController extends Controller
                 'u.name',
                 DB::raw("(SELECT u.name 
                     FROM users u
-                    WHERE u.id = fp.mentor_id LIMIT 1) AS mentor_name"),
+                    WHERE u.id = fp.mentor1_id LIMIT 1) AS mentor_1"),
+                DB::raw("(SELECT u.name 
+                    FROM users u
+                    WHERE u.id = fp.mentor2_id LIMIT 1) AS mentor_2"),
                 DB::raw("(SELECT n.message
                     FROM notification n
                     WHERE n.entity_id = fp.id
@@ -162,9 +172,9 @@ class FinalProjectController extends Controller
     public function save(Request $request)
     {
         $rules = [
-            'transcript' => 'required|file|mimes:webp,jpeg,jpg,png,pdf|max:2048',
-            'krs' => 'required|file|mimes:webp,jpeg,jpg,png,pdf|max:2048',
-            'proposal' => 'required|file|mimes:webp,jpeg,jpg,png,pdf|max:2048',
+            'transcript' => 'required|file|mimes:webp,jpeg,jpg,png,pdf|max:10240',
+            'krs' => 'required|file|mimes:webp,jpeg,jpg,png,pdf|max:10240',
+            'proposal' => 'required|file|mimes:webp,jpeg,jpg,png,pdf|max:10240',
         ];
 
         $validator = Validator::make($request->all(), $rules);
@@ -186,13 +196,18 @@ class FinalProjectController extends Controller
                 mkdir($path, 0775, true);
             }
 
-            $mentorID = null;
+            $mentor1ID = null;
+            $mentor2ID = null;
             $proposalID = null;
             $trancriptID = null;
             $krsID = null;
 
-            if (isset($request->mentor)) {
-                $mentorID = $request->mentor;
+            if (isset($request->mentor_1)) {
+                $mentor1ID = $request->mentor_1;
+            }
+
+            if (isset($request->mentor_2)) {
+                $mentor2ID = $request->mentor_2;
             }
 
             if (isset($request->transcript)) {
@@ -253,7 +268,8 @@ class FinalProjectController extends Controller
                 'title' => $request->title,
                 'description' => $request->description,
                 'student_id' => Auth::user()->id,
-                'mentor_id' => $mentorID,
+                'mentor1_id' => $mentor1ID,
+                'mentor2_id' => $mentor2ID,
                 'transcript_id' => $trancriptID,
                 'krs_id' => $krsID,
                 'proposal_id' => $proposalID,
@@ -299,10 +315,10 @@ class FinalProjectController extends Controller
                 'u.name',
                 DB::raw("(SELECT u.id 
                     FROM users u
-                    WHERE u.id = fp.mentor_id LIMIT 1) AS mentor_id"),
-                DB::raw("(SELECT u.name 
+                    WHERE u.id = fp.mentor1_id LIMIT 1) AS mentor1_id"),
+                DB::raw("(SELECT u.id 
                     FROM users u
-                    WHERE u.id = fp.mentor_id LIMIT 1) AS mentor_name"),
+                    WHERE u.id = fp.mentor2_id LIMIT 1) AS mentor2_id"),
                 DB::raw("(SELECT n.message
                     FROM notification n
                     WHERE n.entity_id = fp.id
@@ -371,9 +387,9 @@ class FinalProjectController extends Controller
     public function update($id, Request $request)
     {
         $rules = [
-            'transcript' => 'file|mimes:webp,jpeg,jpg,png,pdf|max:2048',
-            'krs' => 'file|mimes:webp,jpeg,jpg,png,pdf|max:2048',
-            'proposal' => 'file|mimes:webp,jpeg,jpg,png,pdf|max:2048',
+            'transcript' => 'file|mimes:webp,jpeg,jpg,png,pdf|max:10240',
+            'krs' => 'file|mimes:webp,jpeg,jpg,png,pdf|max:10240',
+            'proposal' => 'file|mimes:webp,jpeg,jpg,png,pdf|max:10240',
         ];
 
         $validator = Validator::make($request->all(), $rules);
@@ -395,13 +411,18 @@ class FinalProjectController extends Controller
                 mkdir($path, 0775, true);
             }
 
-            $mentorID = $request->mentor_id ?? null;
+            $mentor1ID = $request->mentor1_id ?? null;
+            $mentor2ID = $request->mentor2_id ?? null;
             $proposalID = $request->proposal_id ?? null;
             $trancriptID = $request->transcript_id ?? null;
             $krsID = $request->krs_id ?? null;
 
-            if (isset($request->mentor)) {
-                $mentorID = $request->mentor;
+            if (isset($request->mentor_1)) {
+                $mentor1ID = $request->mentor_1;
+            }
+
+            if (isset($request->mentor_2)) {
+                $mentor2ID = $request->mentor_2;
             }
 
             if (isset($request->transcript)) {
@@ -463,7 +484,8 @@ class FinalProjectController extends Controller
                 ->update([
                     'title' => $request->title,
                     'description' => $request->description,
-                    'mentor_id' => $mentorID,
+                    'mentor1_id' => $mentor1ID,
+                    'mentor2_id' => $mentor2ID,
                     'transcript_id' => $trancriptID,
                     'krs_id' => $krsID,
                     'proposal_id' => $proposalID,

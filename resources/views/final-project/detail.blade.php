@@ -53,7 +53,7 @@
                     <table class="table">
                         <tbody>
                             <tr>
-                                <td style="width: 20%">NPM</td>
+                                <td style="width: 15%">NPM</td>
                                 <td>:</td>
                                 <td>{{ $data->username }}</td>
                             </tr>
@@ -63,9 +63,14 @@
                                 <td>{{ $data->name }}</td>
                             </tr>
                             <tr>
-                                <td>Pembimbing KP</td>
+                                <td>Pembimbing 1</td>
                                 <td>:</td>
-                                <td>{{ $data->mentor_name }}</td>
+                                <td>{{ $data->mentor_1 }}</td>
+                            </tr>
+                            <tr>
+                                <td>Pembimbing 2</td>
+                                <td>:</td>
+                                <td>{{ $data->mentor_2 }}</td>
                             </tr>
                             <tr>
                                 <td>Judul</td>

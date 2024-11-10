@@ -318,12 +318,13 @@ return [
             'text' => 'Daftar KP',
             'route' => 'internship.list',
             'icon' => 'fas fa-fw fa-list',
-            'active' => ['internship', 'internship*',]
+            'active' => ['internship', 'internship/*',]
         ],
         [
             'text' => 'Seminar KP',
-            'url' => 'admin/pages',
+            'route' => 'internship-seminar.list',
             'icon' => 'fas fa-fw fa-file-powerpoint',
+            'active' => ['internship-seminar', 'internship-seminar/*',]
         ],
         ['header' => ''],
         ['header' => 'TUGAS AKHIR', 'classes' => 'text-bold'],
@@ -331,14 +332,13 @@ return [
             'text' => 'Daftar TA',
             'route' => 'finalproject.list',
             'icon' => 'fas fa-fw fa-list',
-            'active' => ['final-project', 'final-project*',]
+            'active' => ['final-project', 'final-project/*',]
         ],
         [
             'text' => 'Seminar TA',
-            'url' => 'admin/pages',
+            'route' => 'finalproject-seminar.list',
             'icon' => 'fas fa-fw fa-file-powerpoint',
-            // 'label' => 4,
-            // 'label_color' => 'success',
+            'active' => ['final-project-seminar', 'final-project-seminar/*',]
         ],
     ],
 

@@ -78,5 +78,32 @@ class AuthServiceProvider extends ServiceProvider
                 'student',
             ]);
         });
+
+        Gate::define('ApproveDenySeminar', function($user){
+            return $user->hasAnyRoles([
+                'admin',
+                'koordinator',
+            ]);
+        });
+
+        Gate::define('CreateSeminar', function($user){
+            return $user->hasAnyRoles([
+                'admin',
+                'student',
+            ]);
+        });
+
+        Gate::define('EditSeminar', function($user){
+            return $user->hasAnyRoles([
+                'admin',
+                'koordinator',
+            ]);
+        });
+
+        Gate::define('EditSeminarStudent', function($user){
+            return $user->hasAnyRoles([
+                'student',
+            ]);
+        });
     }
 }

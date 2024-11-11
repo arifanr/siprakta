@@ -105,7 +105,7 @@ class InternshipController extends Controller
         if (!$query) {
             return redirect()
                 ->route('internship.list')
-                ->with('failed', '');
+                ->with('error', '');
         }
 
         $user = Auth::user();
@@ -119,13 +119,13 @@ class InternshipController extends Controller
             if (!$own) {
                 return redirect()
                     ->route('internship.list')
-                    ->with('failed', '');
+                    ->with('error', '');
             }
 
             if ($own->id != $query->id) {
                 return redirect()
                     ->route('internship.list')
-                    ->with('failed', '');
+                    ->with('error', '');
             }
         }
 
@@ -315,7 +315,7 @@ class InternshipController extends Controller
                     WHERE u.id = i.supervisor_id LIMIT 1) AS supervisor_name"),
                 DB::raw("(SELECT n.message
                     FROM notification n
-                    WHERE n.entity_id = i.id
+                    WHERE n.entity_id = i.id and n.entity = 'internship'
                     ORDER BY n.created_at desc LIMIT 1) AS reason"),
                 DB::raw("(SELECT ud.name
                     FROM users_document ud
@@ -344,7 +344,7 @@ class InternshipController extends Controller
         if (!$query) {
             return redirect()
                 ->route('internship.list')
-                ->with('failed', '');
+                ->with('error', '');
         }
 
         $user = Auth::user();
@@ -358,13 +358,13 @@ class InternshipController extends Controller
             if (!$own) {
                 return redirect()
                     ->route('internship.list')
-                    ->with('failed', '');
+                    ->with('error', '');
             }
 
             if ($own->id != $query->id) {
                 return redirect()
                     ->route('internship.list')
-                    ->with('failed', '');
+                    ->with('error', '');
             }
         }
 

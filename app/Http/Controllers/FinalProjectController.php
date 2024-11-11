@@ -39,10 +39,10 @@ class FinalProjectController extends Controller
                 'u.name',
                 DB::raw("(SELECT u.name 
                     FROM users u
-                    WHERE u.id = fp.mentor1_id LIMIT 1) AS mentor_1"),
+                    WHERE u.id = fp.supervisor1_id LIMIT 1) AS supervisor_1"),
                 DB::raw("(SELECT u.name 
                     FROM users u
-                    WHERE u.id = fp.mentor2_id LIMIT 1) AS mentor_2"),
+                    WHERE u.id = fp.supervisor2_id LIMIT 1) AS supervisor_2"),
             )
             ->leftjoin('users as u', 'u.id', '=', 'fp.student_id')
 
@@ -78,13 +78,13 @@ class FinalProjectController extends Controller
                 'u.name',
                 DB::raw("(SELECT u.name 
                     FROM users u
-                    WHERE u.id = fp.mentor1_id LIMIT 1) AS mentor_1"),
+                    WHERE u.id = fp.supervisor1_id LIMIT 1) AS supervisor_1"),
                 DB::raw("(SELECT u.name 
                     FROM users u
-                    WHERE u.id = fp.mentor2_id LIMIT 1) AS mentor_2"),
+                    WHERE u.id = fp.supervisor2_id LIMIT 1) AS supervisor_2"),
                 DB::raw("(SELECT n.message
                     FROM notification n
-                    WHERE n.entity_id = fp.id
+                    WHERE n.entity_id = fp.id and n.entity = 'final_project'
                     ORDER BY n.created_at desc LIMIT 1) AS reason"),
                 DB::raw("(SELECT ud.name
                     FROM users_document ud
@@ -113,7 +113,7 @@ class FinalProjectController extends Controller
         if (!$query) {
             return redirect()
                 ->route('finalproject.list')
-                ->with('failed', '');
+                ->with('error', '');
         }
 
         $user = Auth::user();
@@ -127,13 +127,13 @@ class FinalProjectController extends Controller
             if (!$own) {
                 return redirect()
                     ->route('finalproject.list')
-                    ->with('failed', '');
+                    ->with('error', '');
             }
 
             if ($own->id != $query->id) {
                 return redirect()
                     ->route('finalproject.list')
-                    ->with('failed', '');
+                    ->with('error', '');
             }
         }
 
@@ -147,14 +147,14 @@ class FinalProjectController extends Controller
      */
     public function create()
     {
-        $mentors = DB::table('users as u')
+        $supervisors = DB::table('users as u')
             ->select(
                 'u.id',
                 'u.username',
                 'u.name',
                 DB::raw("(SELECT ua.attribute_value
                     FROM users_attribute ua
-                    WHERE u.id = ua.users_id AND ua.attribute_value = 'pembimbing_ta' LIMIT 1) AS mentor"),
+                    WHERE u.id = ua.users_id AND ua.attribute_value = 'pembimbing_ta' LIMIT 1) AS supervisor"),
             )
             ->leftJoin('users_attribute', 'u.id', '=', 'users_attribute.users_id')
             ->whereIn('attribute_value', ['pembimbing_ta'])
@@ -162,7 +162,7 @@ class FinalProjectController extends Controller
             ->get();
 
         return view('final-project/create', [
-            'mentors' => $mentors,
+            'supervisors' => $supervisors,
         ]);
     }
 
@@ -196,18 +196,18 @@ class FinalProjectController extends Controller
                 mkdir($path, 0775, true);
             }
 
-            $mentor1ID = null;
-            $mentor2ID = null;
+            $supervisor1ID = null;
+            $supervisor2ID = null;
             $proposalID = null;
             $trancriptID = null;
             $krsID = null;
 
-            if (isset($request->mentor_1)) {
-                $mentor1ID = $request->mentor_1;
+            if (isset($request->supervisor_1)) {
+                $supervisor1ID = $request->supervisor_1;
             }
 
-            if (isset($request->mentor_2)) {
-                $mentor2ID = $request->mentor_2;
+            if (isset($request->supervisor_2)) {
+                $supervisor2ID = $request->supervisor_2;
             }
 
             if (isset($request->transcript)) {
@@ -268,8 +268,8 @@ class FinalProjectController extends Controller
                 'title' => $request->title,
                 'description' => $request->description,
                 'student_id' => Auth::user()->id,
-                'mentor1_id' => $mentor1ID,
-                'mentor2_id' => $mentor2ID,
+                'supervisor1_id' => $supervisor1ID,
+                'supervisor2_id' => $supervisor2ID,
                 'transcript_id' => $trancriptID,
                 'krs_id' => $krsID,
                 'proposal_id' => $proposalID,
@@ -294,14 +294,14 @@ class FinalProjectController extends Controller
      */
     public function edit($id, Request $request)
     {
-        $mentors = DB::table('users as u')
+        $supervisors = DB::table('users as u')
             ->select(
                 'u.id',
                 'u.username',
                 'u.name',
                 DB::raw("(SELECT ua.attribute_value
                     FROM users_attribute ua
-                    WHERE u.id = ua.users_id AND ua.attribute_value = 'pembimbing_kp' LIMIT 1) AS mentor"),
+                    WHERE u.id = ua.users_id AND ua.attribute_value = 'pembimbing_kp' LIMIT 1) AS supervisor"),
             )
             ->leftJoin('users_attribute', 'u.id', '=', 'users_attribute.users_id')
             ->whereIn('attribute_value', ['pembimbing_ta'])
@@ -315,13 +315,13 @@ class FinalProjectController extends Controller
                 'u.name',
                 DB::raw("(SELECT u.id 
                     FROM users u
-                    WHERE u.id = fp.mentor1_id LIMIT 1) AS mentor1_id"),
+                    WHERE u.id = fp.supervisor1_id LIMIT 1) AS supervisor1_id"),
                 DB::raw("(SELECT u.id 
                     FROM users u
-                    WHERE u.id = fp.mentor2_id LIMIT 1) AS mentor2_id"),
+                    WHERE u.id = fp.supervisor2_id LIMIT 1) AS supervisor2_id"),
                 DB::raw("(SELECT n.message
                     FROM notification n
-                    WHERE n.entity_id = fp.id
+                    WHERE n.entity_id = fp.id and n.entity = 'final_project'
                     ORDER BY n.created_at desc LIMIT 1) AS reason"),
                 DB::raw("(SELECT ud.name
                     FROM users_document ud
@@ -350,7 +350,7 @@ class FinalProjectController extends Controller
         if (!$query) {
             return redirect()
                 ->route('finalproject.list')
-                ->with('failed', '');
+                ->with('error', '');
         }
 
         $user = Auth::user();
@@ -364,20 +364,20 @@ class FinalProjectController extends Controller
             if (!$own) {
                 return redirect()
                     ->route('finalproject.list')
-                    ->with('failed', '');
+                    ->with('error', '');
             }
 
             if ($own->id != $query->id) {
                 return redirect()
                     ->route('finalproject.list')
-                    ->with('failed', '');
+                    ->with('error', '');
             }
         }
 
         return view('final-project/edit', [
             'id' => $id,
             'data' => $query,
-            'mentors' => $mentors,
+            'supervisors' => $supervisors,
         ]);
     }
 
@@ -411,18 +411,18 @@ class FinalProjectController extends Controller
                 mkdir($path, 0775, true);
             }
 
-            $mentor1ID = $request->mentor1_id ?? null;
-            $mentor2ID = $request->mentor2_id ?? null;
+            $supervisor1ID = $request->supervisor1_id ?? null;
+            $supervisor2ID = $request->supervisor2_id ?? null;
             $proposalID = $request->proposal_id ?? null;
             $trancriptID = $request->transcript_id ?? null;
             $krsID = $request->krs_id ?? null;
 
-            if (isset($request->mentor_1)) {
-                $mentor1ID = $request->mentor_1;
+            if (isset($request->supervisor_1)) {
+                $supervisor1ID = $request->supervisor_1;
             }
 
-            if (isset($request->mentor_2)) {
-                $mentor2ID = $request->mentor_2;
+            if (isset($request->supervisor_2)) {
+                $supervisor2ID = $request->supervisor_2;
             }
 
             if (isset($request->transcript)) {
@@ -484,8 +484,8 @@ class FinalProjectController extends Controller
                 ->update([
                     'title' => $request->title,
                     'description' => $request->description,
-                    'mentor1_id' => $mentor1ID,
-                    'mentor2_id' => $mentor2ID,
+                    'supervisor1_id' => $supervisor1ID,
+                    'supervisor2_id' => $supervisor2ID,
                     'transcript_id' => $trancriptID,
                     'krs_id' => $krsID,
                     'proposal_id' => $proposalID,

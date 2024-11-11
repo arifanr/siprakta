@@ -63,7 +63,11 @@
                         <th>Pembimbing 1</th>
                         <th>Pembimbing 2</th>
                         <th class="text-center">Status</th>
-                        <th class="text-center" style="min-width: 230px">Action</th>
+                        @if (Auth::user()->hasRole('student'))
+                            <th class="text-center" style="width: 165px">Action</th>
+                        @else
+                            <th class="text-center" style="width: 300px">Action</th>
+                        @endif
                     </tr>
                 </thead>
                 <tbody>
@@ -76,8 +80,8 @@
                                     <td>{{ $item->name }}</td>
                                 @endif
                                 <td>{{ $item->title }}</td>
-                                <td>{{ $item->mentor_1 }}</td>
-                                <td>{{ $item->mentor_2 }}</td>
+                                <td>{{ $item->supervisor_1 }}</td>
+                                <td>{{ $item->supervisor_2 }}</td>
                                 <td class="text-center">
                                     @if ($item->status == 0)
                                         <span class="badge bg-info">Submited</span>

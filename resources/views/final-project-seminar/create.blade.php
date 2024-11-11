@@ -26,6 +26,7 @@
                 <form class="form-horizontal" action="{{ route('finalproject-seminar.save') }}" method="POST"
                     enctype="multipart/form-data">
                     @csrf
+                    <input type="hidden" name="final_project_id" value="{{ $data->id }}">
                     <div class="card-body">
                         <div class="form-group row">
                             <label for="" class="col-sm-3 col-form-label">
@@ -33,10 +34,10 @@
                                 <span class="text-red">*</span>
                             </label>
                             <div class="col-sm-9">
-                                <select class="form-control select2bs4 w-full" name="mentor_1" required>
+                                <select class="form-control select2bs4 w-full" name="supervisor_1" required>
                                     <option value="">-- Pembimbing TA --</option>
-                                    @foreach ($mentors as $item)
-                                        <option value="{{ $item->id }}" {{ old('mentor_1') == $item->id ? 'selected' : '' }}>{{ $item->name }}</option>
+                                    @foreach ($supervisors as $item)
+                                        <option value="{{ $item->id }}" {{ $data->supervisor1_id == $item->id ? 'selected' : '' }}>{{ $item->name }}</option>
                                     @endforeach
                                 </select>
                             </div>
@@ -44,13 +45,12 @@
                         <div class="form-group row">
                             <label for="" class="col-sm-3 col-form-label">
                                 Pembimbing 2
-                                <span class="text-red">*</span>
                             </label>
                             <div class="col-sm-9">
-                                <select class="form-control select2bs4 w-full" name="mentor_2" required>
+                                <select class="form-control select2bs4 w-full" name="supervisor_2">
                                     <option value="">-- Pembimbing TA --</option>
-                                    @foreach ($mentors as $item)
-                                        <option value="{{ $item->id }}" {{ old('mentor_2') == $item->id ? 'selected' : '' }}>{{ $item->name }}</option>
+                                    @foreach ($supervisors as $item)
+                                        <option value="{{ $item->id }}" {{ $data->supervisor2_id == $item->id ? 'selected' : '' }}>{{ $item->name }}</option>
                                     @endforeach
                                 </select>
                             </div>
@@ -61,13 +61,13 @@
                                 <span class="text-red">*</span>
                             </label>
                             <div class="col-sm-9">
-                                <input type="text" class="form-control" name="title" value="{{ old('title') }}" required>
+                                <input type="text" class="form-control" name="title" value="{{ $data->title }}" required>
                             </div>
                         </div>
                         <div class="form-group row">
                             <label for="" class="col-sm-3 col-form-label">Deskripsi</label>
                             <div class="col-sm-9">
-                                <textarea class="form-control" name="description" rows="5">{{ old('description') }}</textarea>
+                                <textarea class="form-control" name="description" rows="5">{{ $data->description }}</textarea>
                             </div>
                         </div>
                         <div class="form-group row">
@@ -87,36 +87,6 @@
                         </div>
                         <div class="form-group row">
                             <label for="" class="col-sm-3 col-form-label">
-                                KRS
-                                <span class="text-red">*</span>
-                            </label>
-                            <div class="col-sm-9">
-                                <div class="input-group">
-                                    <div class="custom-file">
-                                        <input type="file" class="custom-file-input" id="exampleInputFile2"
-                                            name="krs" accept=".pdf, .webp, .png, .jpeg, .jpg" required>
-                                        <label class="custom-file-label" for="exampleInputFile2">Choose file</label>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="form-group row">
-                            <label for="" class="col-sm-3 col-form-label">
-                                Transkrip Nilai
-                                <span class="text-red">*</span>
-                            </label>
-                            <div class="col-sm-9">
-                                <div class="input-group">
-                                    <div class="custom-file">
-                                        <input type="file" class="custom-file-input" id="exampleInputFile3"
-                                            name="transcript" accept=".pdf, .webp, .png, .jpeg, .jpg" value="{{ old('transcript') }}" required>
-                                        <label class="custom-file-label" for="exampleInputFile3">Choose file</label>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="form-group row">
-                            <label for="" class="col-sm-3 col-form-label">
                                 Laporan TA
                                 <span class="text-red">*</span>
                             </label>
@@ -130,57 +100,60 @@
                                 </div>
                             </div>
                         </div>
-                        @if (!Auth::user()->hasRole('student'))
-                            <div class="form-group row">
-                                <label for="" class="col-sm-3 col-form-label">
-                                    Jadwal Seminar
-                                    <span class="text-red">*</span>
-                                </label>
-                                <div class="col-sm-9">
-                                    <div class="input-group">
-                                        <div class="input-group-prepend">
-                                            <span class="input-group-text"><i class="far fa-calendar-alt"></i></span>
-                                        </div>
-                                        <input type="text" class="form-control" name="schedule"
-                                            data-inputmask-alias="datetime" data-inputmask-inputformat="dd/mm/yyyy HH:MM" data-mask
-                                            value="{{ old('end_date') }}" required>
-                                    </div>
-                                </div>
+                        <div class="form-group row">
+                            <label for="" class="col-sm-3 col-form-label">
+                                Proposal
+                            </label>
+                            <div class="col-sm-9 col-form-label">
+                                @if ($data->proposal_url)
+                                    @if (explode('.', $data->proposal_url)[1] != 'pdf')
+                                        <a href="{{ asset($data->proposal_url) }}" target="_blank">
+                                            <img src="{{ asset($data->proposal_url) }}" alt="" height="150px">
+                                        </a>
+                                    @else
+                                        <a href="{{ asset($data->proposal_url) }}" target="_blank">
+                                            {{ $data->proposal_name }}
+                                        </a>
+                                    @endif
+                                @endif
                             </div>
-                            <div class="form-group row">
-                                <label for="" class="col-sm-3 col-form-label">Penguji TA 1</label>
-                                <div class="col-sm-9">
-                                    <select class="form-control select2bs4 w-full" name="examiner1">
-                                        <option value="">-- Penguji TA --</option>
-                                        @foreach ($examiners as $item)
-                                            <option value="{{ $item->id }}" {{ old('examiner1') == $item->id ? 'selected' : '' }}>{{ $item->name }}</option>
-                                        @endforeach
-                                    </select>
-                                </div>
+                        </div>
+                        <div class="form-group row">
+                            <label for="" class="col-sm-3 col-form-label">
+                                KRS
+                            </label>
+                            <div class="col-sm-9 col-form-label">
+                                @if ($data->krs_url)
+                                    @if (explode('.', $data->krs_url)[1] != 'pdf')
+                                        <a href="{{ asset($data->krs_url) }}" target="_blank">
+                                            <img src="{{ asset($data->krs_url) }}" alt="" height="150px">
+                                        </a>
+                                    @else
+                                        <a href="{{ asset($data->krs_url) }}" target="_blank">
+                                            {{ $data->krs_name }}
+                                        </a>
+                                    @endif
+                                @endif
                             </div>
-                            <div class="form-group row">
-                                <label for="" class="col-sm-3 col-form-label">Penguji TA 2</label>
-                                <div class="col-sm-9">
-                                    <select class="form-control select2bs4 w-full" name="examiner2">
-                                        <option value="">-- Penguji TA --</option>
-                                        @foreach ($examiners as $item)
-                                            <option value="{{ $item->id }}" {{ old('examiner2') == $item->id ? 'selected' : '' }}>{{ $item->name }}</option>
-                                        @endforeach
-                                    </select>
-                                </div>
+                        </div>
+                        <div class="form-group row">
+                            <label for="" class="col-sm-3 col-form-label">
+                                Transkrip Nilai
+                            </label>
+                            <div class="col-sm-9 col-form-label">
+                                @if ($data->transcript_url)
+                                    @if (explode('.', $data->transcript_url)[1] != 'pdf')
+                                        <a href="{{ asset($data->transcript_url) }}" target="_blank">
+                                            <img src="{{ asset($data->transcript_url) }}" alt="" height="100px">
+                                        </a>
+                                    @else
+                                        <a href="{{ asset($data->transcript_url) }}" target="_blank">
+                                            {{ $data->transcript_name }}
+                                        </a>
+                                    @endif
+                                @endif
                             </div>
-                            <div class="form-group row">
-                                <label for="" class="col-sm-3 col-form-label">Penguji TA 3</label>
-                                <div class="col-sm-9">
-                                    <select class="form-control select2bs4 w-full" name="examiner3">
-                                        <option value="">-- Penguji TA --</option>
-                                        @foreach ($examiners as $item)
-                                            <option value="{{ $item->id }}" {{ old('examiner3') == $item->id ? 'selected' : '' }}>{{ $item->name }}</option>
-                                        @endforeach
-                                    </select>
-                                </div>
-                            </div>
-                        @endif
+                        </div>
                     </div>
                     <div class="card-footer">
                         <button type="submit" class="btn btn-info px-3">Submit</button>

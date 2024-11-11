@@ -142,7 +142,7 @@ class InternshipSeminarController extends Controller
         if (!$query) {
             return redirect()
                 ->route('internship-seminar.list')
-                ->with('failed', 'Data tidak ditemukan');
+                ->with('error', 'Data tidak ditemukan');
         }
 
         $user = Auth::user();
@@ -179,6 +179,7 @@ class InternshipSeminarController extends Controller
     public function create()
     {
         $user = Auth::user();
+
         $supervisors = DB::table('users as u')
             ->select(
                 'u.id',
@@ -458,7 +459,7 @@ class InternshipSeminarController extends Controller
         if (!$query) {
             return redirect()
                 ->route('internship-seminar.list')
-                ->with('failed', 'Data tidak ditemukan');
+                ->with('error', 'Data tidak ditemukan');
         }
 
         $user = Auth::user();

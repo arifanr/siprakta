@@ -27,28 +27,96 @@
                     enctype="multipart/form-data">
                     @csrf
                     {{ method_field('patch') }}
+                    <input type="hidden" name="final_project_id" value="{{ $data->final_project_id }}">
                     <input type="hidden" name="transcript_id" value="{{ $data->transcript_id }}">
                     <input type="hidden" name="krs_id" value="{{ $data->krs_id }}">
                     <input type="hidden" name="registration_id" value="{{ $data->registration_id }}">
                     <input type="hidden" name="report_id" value="{{ $data->report_id }}">
-                    <input type="hidden" name="mentor1_id" value="{{ $data->mentor1_id }}">
-                    <input type="hidden" name="mentor2_id" value="{{ $data->mentor2_id }}">
+                    <input type="hidden" name="supervisor1_id" value="{{ $data->supervisor1_id }}">
+                    <input type="hidden" name="supervisor2_id" value="{{ $data->supervisor2_id }}">
                     <input type="hidden" name="examiner1_id" value="{{ $data->examiner1_id }}">
                     <input type="hidden" name="examiner2_id" value="{{ $data->examiner2_id }}">
                     <input type="hidden" name="examiner3_id" value="{{ $data->examiner3_id }}">
                     <input type="hidden" name="schedule_old" value="{{ $data->schedule }}">
                     <div class="card-body">
+                        @if (!Auth::user()->hasRole('student'))
+                            <div class="form-group row">
+                                <label for="" class="col-sm-3 col-form-label">Nilai</label>
+                                <div class="col-sm-9">
+                                    <input type="text" class="form-control" name="grade" value="{{ $data->grade }}">
+                                </div>
+                            </div>
+                            <div class="form-group row">
+                                <label for="" class="col-sm-3 col-form-label">
+                                    Jadwal Seminar
+                                </label>
+                                <div class="col-sm-9">
+                                    <div class="input-group">
+                                        <div class="input-group-prepend">
+                                            <span class="input-group-text"><i class="far fa-calendar-alt"></i></span>
+                                        </div>
+                                        <input type="text" class="form-control" name="schedule"
+                                            data-inputmask-alias="datetime" data-inputmask-inputformat="dd/mm/yyyy HH:MM"
+                                            data-mask
+                                            value="{{ $data->schedule? \Carbon\Carbon::parse($data->schedule)->timezone(session('timezone', 'Asia/Jakarta'))->format('d/m/Y H:i'): '' }}">
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="form-group row">
+                                <label for="" class="col-sm-3 col-form-label">Penguji 1</label>
+                                <div class="col-sm-9">
+                                    <select class="form-control select2bs4 w-full" name="examiner1">
+                                        <option value="">-- Penguji TA --</option>
+                                        @foreach ($examiners as $item)
+                                            <option value="{{ $item->id }}"
+                                                {{ $data->examiner1_id == $item->id ? 'selected' : '' }}>
+                                                {{ $item->name }}
+                                            </option>
+                                        @endforeach
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="form-group row">
+                                <label for="" class="col-sm-3 col-form-label">Penguji 2</label>
+                                <div class="col-sm-9">
+                                    <select class="form-control select2bs4 w-full" name="examiner2">
+                                        <option value="">-- Penguji TA --</option>
+                                        @foreach ($examiners as $item)
+                                            <option value="{{ $item->id }}"
+                                                {{ $data->examiner2_id == $item->id ? 'selected' : '' }}>
+                                                {{ $item->name }}
+                                            </option>
+                                        @endforeach
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="form-group row">
+                                <label for="" class="col-sm-3 col-form-label">Penguji 3</label>
+                                <div class="col-sm-9">
+                                    <select class="form-control select2bs4 w-full" name="examiner3">
+                                        <option value="">-- Penguji TA --</option>
+                                        @foreach ($examiners as $item)
+                                            <option value="{{ $item->id }}"
+                                                {{ $data->examiner3_id == $item->id ? 'selected' : '' }}>
+                                                {{ $item->name }}
+                                            </option>
+                                        @endforeach
+                                    </select>
+                                </div>
+                            </div>
+                        @endif
                         <div class="form-group row">
                             <label for="" class="col-sm-3 col-form-label">
                                 Pembimbing 1
                                 <span class="text-red">*</span>
                             </label>
                             <div class="col-sm-9">
-                                <select class="form-control select2bs4 w-full" name="mentor_1">
+                                <select class="form-control select2bs4 w-full" name="supervisor_1"
+                                    {{ Auth::user()->hasRole('student') ? 'disabled' : 'required' }}>
                                     <option value="">-- Pembimbing TA --</option>
-                                    @foreach ($mentors as $item)
+                                    @foreach ($supervisors as $item)
                                         <option value="{{ $item->id }}"
-                                            {{ $data->mentor1_id == $item->id ? 'selected' : '' }}>{{ $item->name }}
+                                            {{ $data->supervisor1_id == $item->id ? 'selected' : '' }}>{{ $item->name }}
                                         </option>
                                     @endforeach
                                 </select>
@@ -57,14 +125,14 @@
                         <div class="form-group row">
                             <label for="" class="col-sm-3 col-form-label">
                                 Pembimbing 2
-                                <span class="text-red">*</span>
                             </label>
                             <div class="col-sm-9">
-                                <select class="form-control select2bs4 w-full" name="mentor_2">
+                                <select class="form-control select2bs4 w-full" name="supervisor_2"
+                                    {{ Auth::user()->hasRole('student') ? 'disabled' : '' }}>
                                     <option value="">-- Pembimbing TA --</option>
-                                    @foreach ($mentors as $item)
+                                    @foreach ($supervisors as $item)
                                         <option value="{{ $item->id }}"
-                                            {{ $data->mentor2_id == $item->id ? 'selected' : '' }}>{{ $item->name }}
+                                            {{ $data->supervisor2_id == $item->id ? 'selected' : '' }}>{{ $item->name }}
                                         </option>
                                     @endforeach
                                 </select>
@@ -112,59 +180,7 @@
                         </div>
                         <div class="form-group row">
                             <label for="" class="col-sm-3 col-form-label">
-                                KRS
-                            </label>
-                            <div class="col-sm-9">
-                                <div class="input-group mb-2">
-                                    <div class="custom-file">
-                                        <input type="file" class="custom-file-input" id="exampleInputFile2"
-                                            name="krs" accept=".pdf, .webp, .png, .jpeg, .jpg"
-                                            value="{{ old('krs') }}">
-                                        <label class="custom-file-label" for="exampleInputFile2">Choose file</label>
-                                    </div>
-                                </div>
-                                @if ($data->krs_url)
-                                    @if (explode('.', $data->krs_url)[1] != 'pdf')
-                                        <a href="{{ asset($data->krs_url) }}" target="_blank">
-                                            <img src="{{ asset($data->krs_url) }}" alt="" height="150px">
-                                        </a>
-                                    @else
-                                        <a href="{{ asset($data->krs_url) }}" target="_blank">
-                                            {{ $data->krs_name }}
-                                        </a>
-                                    @endif
-                                @endif
-                            </div>
-                        </div>
-                        <div class="form-group row">
-                            <label for="" class="col-sm-3 col-form-label">
-                                Transkrip Nilai
-                            </label>
-                            <div class="col-sm-9">
-                                <div class="input-group mb-2">
-                                    <div class="custom-file">
-                                        <input type="file" class="custom-file-input" id="exampleInputFile3"
-                                            name="transcript" accept=".pdf, .webp, .png, .jpeg, .jpg"
-                                            value="{{ old('transcript') }}">
-                                        <label class="custom-file-label" for="exampleInputFile3">Choose file</label>
-                                    </div>
-                                </div>
-                                @if ($data->transcript_url)
-                                    @if (explode('.', $data->transcript_url)[1] != 'pdf')
-                                        <a href="{{ asset($data->transcript_url) }}" target="_blank">
-                                            <img src="{{ asset($data->transcript_url) }}" alt="" height="100px">
-                                        </a>
-                                    @else
-                                        <a href="{{ asset($data->transcript_url) }}" target="_blank">
-                                            {{ $data->transcript_name }}
-                                        </a>
-                                    @endif
-                                @endif
-                            </div>
-                        </div>
-                        <div class="form-group row">
-                            <label for="" class="col-sm-3 col-form-label">
-                                Laporan KP
+                                Laporan TA
                             </label>
                             <div class="col-sm-9">
                                 <div class="input-group">
@@ -187,65 +203,60 @@
                                 @endif
                             </div>
                         </div>
-                        @if (!Auth::user()->hasRole('student'))
-                            <div class="form-group row">
-                                <label for="" class="col-sm-3 col-form-label">
-                                    Jadwal Seminar
-                                    <span class="text-red">*</span>
-                                </label>
-                                <div class="col-sm-9">
-                                    <div class="input-group">
-                                        <div class="input-group-prepend">
-                                            <span class="input-group-text"><i class="far fa-calendar-alt"></i></span>
-                                        </div>
-                                        <input type="text" class="form-control" name="schedule"
-                                            data-inputmask-alias="datetime" data-inputmask-inputformat="dd/mm/yyyy HH:MM"
-                                            data-mask
-                                            value="{{ $data->schedule ? \Carbon\Carbon::parse($data->schedule)->timezone(session('timezone', 'Asia/Jakarta'))->format('d/m/Y H:i') : '' }}"
-                                            required>
-                                    </div>
-                                </div>
+                        <div class="form-group row">
+                            <label for="" class="col-sm-3 col-form-label">
+                                Proposal
+                            </label>
+                            <div class="col-sm-9 col-form-label">
+                                @if ($data->proposal_url)
+                                    @if (explode('.', $data->proposal_url)[1] != 'pdf')
+                                        <a href="{{ asset($data->proposal_url) }}" target="_blank">
+                                            <img src="{{ asset($data->proposal_url) }}" alt="" height="150px">
+                                        </a>
+                                    @else
+                                        <a href="{{ asset($data->proposal_url) }}" target="_blank">
+                                            {{ $data->proposal_name }}
+                                        </a>
+                                    @endif
+                                @endif
                             </div>
-                            <div class="form-group row">
-                                <label for="" class="col-sm-3 col-form-label">Penguji 1</label>
-                                <div class="col-sm-9">
-                                    <select class="form-control select2bs4 w-full" name="examiner1">
-                                        <option value="">-- Penguji TA --</option>
-                                        @foreach ($examiners as $item)
-                                            <option value="{{ $item->id }}"
-                                                {{ $data->examiner1_id == $item->id ? 'selected' : '' }}>{{ $item->name }}
-                                            </option>
-                                        @endforeach
-                                    </select>
-                                </div>
+                        </div>
+                        <div class="form-group row">
+                            <label for="" class="col-sm-3 col-form-label">
+                                KRS
+                            </label>
+                            <div class="col-sm-9 col-form-label">
+                                @if ($data->krs_url)
+                                    @if (explode('.', $data->krs_url)[1] != 'pdf')
+                                        <a href="{{ asset($data->krs_url) }}" target="_blank">
+                                            <img src="{{ asset($data->krs_url) }}" alt="" height="150px">
+                                        </a>
+                                    @else
+                                        <a href="{{ asset($data->krs_url) }}" target="_blank">
+                                            {{ $data->krs_name }}
+                                        </a>
+                                    @endif
+                                @endif
                             </div>
-                            <div class="form-group row">
-                                <label for="" class="col-sm-3 col-form-label">Penguji 2</label>
-                                <div class="col-sm-9">
-                                    <select class="form-control select2bs4 w-full" name="examiner2">
-                                        <option value="">-- Penguji TA --</option>
-                                        @foreach ($examiners as $item)
-                                            <option value="{{ $item->id }}"
-                                                {{ $data->examiner2_id == $item->id ? 'selected' : '' }}>{{ $item->name }}
-                                            </option>
-                                        @endforeach
-                                    </select>
-                                </div>
+                        </div>
+                        <div class="form-group row">
+                            <label for="" class="col-sm-3 col-form-label">
+                                Transkrip Nilai
+                            </label>
+                            <div class="col-sm-9 col-form-label">
+                                @if ($data->transcript_url)
+                                    @if (explode('.', $data->transcript_url)[1] != 'pdf')
+                                        <a href="{{ asset($data->transcript_url) }}" target="_blank">
+                                            <img src="{{ asset($data->transcript_url) }}" alt="" height="100px">
+                                        </a>
+                                    @else
+                                        <a href="{{ asset($data->transcript_url) }}" target="_blank">
+                                            {{ $data->transcript_name }}
+                                        </a>
+                                    @endif
+                                @endif
                             </div>
-                            <div class="form-group row">
-                                <label for="" class="col-sm-3 col-form-label">Penguji 3</label>
-                                <div class="col-sm-9">
-                                    <select class="form-control select2bs4 w-full" name="examiner3">
-                                        <option value="">-- Penguji TA --</option>
-                                        @foreach ($examiners as $item)
-                                            <option value="{{ $item->id }}"
-                                                {{ $data->examiner3_id == $item->id ? 'selected' : '' }}>{{ $item->name }}
-                                            </option>
-                                        @endforeach
-                                    </select>
-                                </div>
-                            </div>
-                        @endif
+                        </div>
                     </div>
                     <div class="card-footer">
                         <button type="submit" class="btn btn-info px-3">Submit</button>

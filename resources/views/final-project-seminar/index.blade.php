@@ -61,11 +61,17 @@
                         @endif
                         <th>Judul</th>
                         <th style="width: 150px">Jadwal Seminar</th>
+                        <th>Pembimbing 1</th>
+                        <th>Pembimbing 2</th>
                         <th>Penguji 1</th>
                         <th>Penguji 2</th>
                         <th>Penguji 3</th>
                         <th class="text-center">Status</th>
-                        <th class="text-center" style="min-width: 230px">Action</th>
+                        @if (Auth::user()->hasRole('student'))
+                            <th class="text-center" style="width: 165px">Action</th>
+                        @else
+                            <th class="text-center" style="width: 165px">Action</th>
+                        @endif
                     </tr>
                 </thead>
                 <tbody>
@@ -85,9 +91,11 @@
                                         <i>Menunggu Jadwal</i>
                                     @endif
                                 </td>
-                                <td>{{ $item->examiner1 }}</td>
-                                <td>{{ $item->examiner2 }}</td>
-                                <td>{{ $item->examiner3 }}</td>
+                                <td>{{ $item->supervisor_1 }}</td>
+                                <td>{{ $item->supervisor_2 }}</td>
+                                <td>{{ $item->examiner_1 }}</td>
+                                <td>{{ $item->examiner_2 }}</td>
+                                <td>{{ $item->examiner_3 }}</td>
                                 <td class="text-center">
                                     @if ($item->status == 0)
                                         <span class="badge bg-info">Submited</span>

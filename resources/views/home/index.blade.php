@@ -62,95 +62,103 @@
     </div>
 
     @can('status')
-        @if($internship)
+
         <div class="row justify-content-center">
-            <div class="col-md-6">
-                <div class="card">
-                    <div class="card-body">
-                        <h3>Status Kerja Praktik</h3><br>
-                        <table class="table table-sm">
-                            <tbody>
-                                <tr>
-                                    <td style="width: 120px">Tahapan</td>
-                                    <td>:
-                                        @if ($internship->internship_status == 0)
-                                            Mengajukan KP
-                                        @elseif ($internship->internship_status == 1)
-                                            KP Disetujui
-                                        @elseif ($internship->internship_status == 2)
-                                            <span class="text-red">KP Ditolak</span>
-                                        @elseif ($internship->seminar_status == 0)
-                                            Mengajukan Seminar KP
-                                        @elseif ($internship->seminar_status == 1)
-                                            Seminar KP Disetujui
-                                        @elseif ($internship->seminar_status == 2)
-                                            <span class="text-red">Seminar KP Ditolak</span>
-                                        @endif
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td>Jadwal Seminar</td>
-                                    <td>: {{ 
-                                        $internship->schedule
-                                            ? \Carbon\Carbon::parse($internship->schedule)->timezone(session('timezone', 'Asia/Jakarta'))->format('d M Y') 
-                                            : 'Belum ada Jadwal'
-                                    }}</td>
-                                </tr>
-                                <tr>
-                                    <td>Nilai</td>
-                                    <td>: {{ $internship->grade }}</td>
-                                </tr>
-                            </tbody>
-                        </table>
+            @if ($internship)
+                <div class="col-md-6">
+                    <div class="card">
+                        <div class="card-body">
+                            <h3>Status Kerja Praktik</h3><br>
+                            <table class="table table-sm">
+                                <tbody>
+                                    <tr>
+                                        <td style="width: 120px">Tahapan</td>
+                                        <td>:
+                                            @if ($internship->status == 0)
+                                                Mengajukan KP
+                                            @elseif ($internship->status == 1)
+                                                @if ($internship->seminar_status == 0)
+                                                    Mengajukan Seminar KP
+                                                @elseif ($internship->seminar_status == 1)
+                                                    Seminar KP Disetujui
+                                                @elseif ($internship->seminar_status == 2)
+                                                    <span class="text-red">Seminar KP Ditolak</span>
+                                                @else
+                                                    KP Disetujui
+                                                @endif
+                                            @elseif ($internship->status == 2)
+                                                <span class="text-red">KP Ditolak</span>
+                                            @endif
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>Jadwal Seminar</td>
+                                        <td>:
+                                            {{ $internship->schedule
+                                                ? \Carbon\Carbon::parse($internship->schedule)->timezone(session('timezone', 'Asia/Jakarta'))->format('d M Y')
+                                                : 'Belum ada Jadwal' }}
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>Nilai</td>
+                                        <td>: {{ $internship->grade }}</td>
+                                    </tr>
+                                </tbody>
+                            </table>
 
+                        </div>
                     </div>
                 </div>
-            </div>
+            @endif
 
-            <div class="col-md-6">
-                <div class="card">
-                    <div class="card-body">
-                        <h3>Status Tugas Akhir</h3><br>
-                        <table class="table table-sm">
-                            <tbody>
-                                <tr>
-                                    <td style="width: 120px">Tahapan</td>
-                                    <td>:
-                                        @if ($internship->internship_status == 0)
-                                            Mengajukan KP
-                                        @elseif ($internship->internship_status == 1)
-                                            KP Disetujui
-                                        @elseif ($internship->internship_status == 2)
-                                            <span class="text-red">KP Ditolak</span>
-                                        @elseif ($internship->seminar_status == 0)
-                                            Mengajukan Seminar KP
-                                        @elseif ($internship->seminar_status == 1)
-                                            Seminar KP Disetujui
-                                        @elseif ($internship->seminar_status == 2)
-                                            <span class="text-red">Seminar KP Ditolak</span>
-                                        @endif
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td>Jadwal Seminar</td>
-                                    <td>: {{ 
-                                        $internship->schedule
-                                            ? \Carbon\Carbon::parse($internship->schedule)->timezone(session('timezone', 'Asia/Jakarta'))->format('d M Y') 
-                                            : 'Belum ada Jadwal'
-                                    }}</td>
-                                </tr>
-                                <tr>
-                                    <td>Nilai</td>
-                                    <td>: {{ $internship->grade }}</td>
-                                </tr>
-                            </tbody>
-                        </table>
+            @if ($finalproject)
+                <div class="col-md-6">
+                    <div class="card">
+                        <div class="card-body">
+                            <h3>Status Tugas Akhir</h3><br>
+                            <table class="table table-sm">
+                                <tbody>
+                                    <tr>
+                                        <td style="width: 120px">Tahapan</td>
+                                        <td>:
+                                            @if ($finalproject->status == 0)
+                                                Mengajukan TA
+                                            @elseif ($finalproject->status == 1)
+                                                @if ($finalproject->seminar_status == 0)
+                                                    Mengajukan Seminar TA
+                                                @elseif ($finalproject->seminar_status == 1)
+                                                    Seminar TA Disetujui
+                                                @elseif ($finalproject->seminar_status == 2)
+                                                    <span class="text-red">Seminar TA Ditolak</span>
+                                                @else
+                                                    TA Disetujui
+                                                @endif
+                                            @elseif ($finalproject->status == 2)
+                                                <span class="text-red">TA Ditolak</span>
+                                            @endif
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>Jadwal Seminar</td>
+                                        <td>:
+                                            {{ $finalproject->schedule
+                                                ? \Carbon\Carbon::parse($finalproject->schedule)->timezone(session('timezone', 'Asia/Jakarta'))->format('d M Y')
+                                                : 'Belum ada Jadwal' }}
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>Nilai</td>
+                                        <td>: {{ $finalproject->grade }}</td>
+                                    </tr>
+                                </tbody>
+                            </table>
 
+                        </div>
                     </div>
                 </div>
-            </div>
+            @endif
         </div>
-        @endif
+
     @endcan
 @stop
 

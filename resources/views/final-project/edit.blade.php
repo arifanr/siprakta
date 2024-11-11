@@ -30,17 +30,17 @@
                     <input type="hidden" name="transcript_id" value="{{ $data->transcript_id }}">
                     <input type="hidden" name="krs_id" value="{{ $data->krs_id }}">
                     <input type="hidden" name="proposal_id" value="{{ $data->proposal_id }}">
-                    <input type="hidden" name="mentor1_id" value="{{ $data->mentor1_id }}">
-                    <input type="hidden" name="mentor2_id" value="{{ $data->mentor2_id }}">
+                    <input type="hidden" name="supervisor1_id" value="{{ $data->supervisor1_id }}">
+                    <input type="hidden" name="supervisor2_id" value="{{ $data->supervisor2_id }}">
                     <div class="card-body">
                         <div class="form-group row">
                             <label for="" class="col-sm-3 col-form-label">Pembimbing 1</label>
                             <div class="col-sm-9">
-                                <select class="form-control select2bs4 w-full" name="mentor_1">
+                                <select class="form-control select2bs4 w-full" name="supervisor_1">
                                     <option value="">-- Pembimbing TA --</option>
-                                    @foreach ($mentors as $item)
+                                    @foreach ($supervisors as $item)
                                         <option value="{{ $item->id }}"
-                                            {{ $data->mentor1_id == $item->id ? 'selected' : '' }}>{{ $item->name }}
+                                            {{ $data->supervisor1_id == $item->id ? 'selected' : '' }}>{{ $item->name }}
                                         </option>
                                     @endforeach
                                 </select>
@@ -49,11 +49,11 @@
                         <div class="form-group row">
                             <label for="" class="col-sm-3 col-form-label">Pembimbing 2</label>
                             <div class="col-sm-9">
-                                <select class="form-control select2bs4 w-full" name="mentor_2">
+                                <select class="form-control select2bs4 w-full" name="supervisor_2">
                                     <option value="">-- Pembimbing TA --</option>
-                                    @foreach ($mentors as $item)
+                                    @foreach ($supervisors as $item)
                                         <option value="{{ $item->id }}"
-                                            {{ $data->mentor2_id == $item->id ? 'selected' : '' }}>{{ $item->name }}
+                                            {{ $data->supervisor2_id == $item->id ? 'selected' : '' }}>{{ $item->name }}
                                         </option>
                                     @endforeach
                                 </select>

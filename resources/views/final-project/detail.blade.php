@@ -65,12 +65,12 @@
                             <tr>
                                 <td>Pembimbing 1</td>
                                 <td>:</td>
-                                <td>{{ $data->mentor_1 }}</td>
+                                <td>{{ $data->supervisor_1 }}</td>
                             </tr>
                             <tr>
                                 <td>Pembimbing 2</td>
                                 <td>:</td>
-                                <td>{{ $data->mentor_2 }}</td>
+                                <td>{{ $data->supervisor_2 }}</td>
                             </tr>
                             <tr>
                                 <td>Judul</td>

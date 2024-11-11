@@ -26,9 +26,10 @@ class HomeController extends Controller
     public function index()
     {
         $user = Auth::user();
+
         $internship = DB::table('internship as i')
             ->select(
-                'i.status as internship_status',
+                'i.status as status',
                 'is.status as seminar_status',
                 'is.schedule',
                 'is.grade',
@@ -37,8 +38,20 @@ class HomeController extends Controller
             ->where('i.student_id', '=', $user->id)
             ->first();
 
+        $finalproject = DB::table('final_project as fp')
+            ->select(
+                'fp.status as status',
+                'fps.status as seminar_status',
+                'fps.schedule',
+                'fps.grade',
+            )
+            ->leftJoin('final_project_seminar as fps', 'fps.final_project_id', '=', 'fp.id')
+            ->where('fp.student_id', '=', $user->id)
+            ->first();
+
         return view('home.index', [
             'internship' => $internship,
+            'finalproject' => $finalproject,
         ]);
     }
 }

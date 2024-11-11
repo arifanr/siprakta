@@ -83,6 +83,7 @@ class AuthServiceProvider extends ServiceProvider
             return $user->hasAnyRoles([
                 'admin',
                 'student',
+                'koordinator',
             ]);
         });
 

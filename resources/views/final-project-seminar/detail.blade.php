@@ -99,12 +99,12 @@
                             <tr>
                                 <td>Pembimbing 1</td>
                                 <td>:</td>
-                                <td>{{ $data->mentor_1 }}</td>
+                                <td>{{ $data->supervisor_1 }}</td>
                             </tr>
                             <tr>
                                 <td>Pembimbing 2</td>
                                 <td>:</td>
-                                <td>{{ $data->mentor_2 }}</td>
+                                <td>{{ $data->supervisor_2 }}</td>
                             </tr>
                             <tr>
                                 <td>Judul</td>
@@ -157,6 +157,40 @@
                                 </td>
                             </tr>
                             <tr>
+                                <td>Laporan TA</td>
+                                <td>:</td>
+                                <td>
+                                    @if ($data->report_url)
+                                        @if (explode('.', $data->report_url)[1] != 'pdf')
+                                            <a href="{{ asset($data->report_url) }}" target="_blank">
+                                                <img src="{{ asset($data->report_url) }}" alt="" height="100px">
+                                            </a>
+                                        @else
+                                            <a href="{{ asset($data->report_url) }}" target="_blank">
+                                                {{ $data->report_name }}
+                                            </a>
+                                        @endif
+                                    @endif
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>Proposal</td>
+                                <td>:</td>
+                                <td>
+                                    @if ($data->proposal_url)
+                                        @if (explode('.', $data->proposal_url)[1] != 'pdf')
+                                            <a href="{{ asset($data->proposal_url) }}" target="_blank">
+                                                <img src="{{ asset($data->proposal_url) }}" alt="" height="150px">
+                                            </a>
+                                        @else
+                                            <a href="{{ asset($data->proposal_url) }}" target="_blank">
+                                                {{ $data->proposal_name }}
+                                            </a>
+                                        @endif
+                                    @endif
+                                </td>
+                            </tr>
+                            <tr>
                                 <td>KRS</td>
                                 <td>:</td>
                                 <td>
@@ -186,23 +220,6 @@
                                         @else
                                             <a href="{{ asset($data->transcript_url) }}" target="_blank">
                                                 {{ $data->transcript_name }}
-                                            </a>
-                                        @endif
-                                    @endif
-                                </td>
-                            </tr>
-                            <tr>
-                                <td>Laporan KP</td>
-                                <td>:</td>
-                                <td>
-                                    @if ($data->report_url)
-                                        @if (explode('.', $data->report_url)[1] != 'pdf')
-                                            <a href="{{ asset($data->report_url) }}" target="_blank">
-                                                <img src="{{ asset($data->report_url) }}" alt="" height="100px">
-                                            </a>
-                                        @else
-                                            <a href="{{ asset($data->report_url) }}" target="_blank">
-                                                {{ $data->report_name }}
                                             </a>
                                         @endif
                                     @endif

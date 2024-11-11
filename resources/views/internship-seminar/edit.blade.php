@@ -223,7 +223,6 @@
                         <div class="form-group row">
                             <label for="" class="col-sm-3 col-form-label">
                                 Surat Pernyataan
-
                             </label>
                             <div class="col-sm-9 col-form-label">
                                 @if ($data->statement_url)
@@ -242,7 +241,6 @@
                         <div class="form-group row">
                             <label for="" class="col-sm-3 col-form-label">
                                 KRS
-
                             </label>
                             <div class="col-sm-9 col-form-label">
                                 @if ($data->krs_url)
@@ -261,7 +259,6 @@
                         <div class="form-group row">
                             <label for="" class="col-sm-3 col-form-label">
                                 Transkrip Nilai
-
                             </label>
                             <div class="col-sm-9 col-form-label">
                                 @if ($data->transcript_url)

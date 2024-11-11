@@ -30,10 +30,10 @@
                         <div class="form-group row">
                             <label for="" class="col-sm-3 col-form-label">Pembimbing KP</label>
                             <div class="col-sm-9">
-                                <select class="form-control select2bs4 w-full" name="mentor">
+                                <select class="form-control select2bs4 w-full" name="supervisor">
                                     <option value="">-- Pembimbing KP --</option>
-                                    @foreach ($mentorInternships as $item)
-                                        <option value="{{ $item->id }}" {{ old('mentor') == $item->id ? 'selected' : '' }}>{{ $item->name }}</option>
+                                    @foreach ($supervisors as $item)
+                                        <option value="{{ $item->id }}" {{ old('supervisor') == $item->id ? 'selected' : '' }}>{{ $item->name }}</option>
                                     @endforeach
                                 </select>
                             </div>

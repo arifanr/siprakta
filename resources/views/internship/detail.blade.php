@@ -65,7 +65,7 @@
                             <tr>
                                 <td>Pembimbing KP</td>
                                 <td>:</td>
-                                <td>{{ $data->mentor_name }}</td>
+                                <td>{{ $data->supervisor_name }}</td>
                             </tr>
                             <tr>
                                 <td>Judul</td>

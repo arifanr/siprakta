@@ -84,15 +84,17 @@ internship
     id
     title
     description
-    company
+    company_name
+    company_address
+    company_phone
     start_date
     end_date
+    statement_id
     proposal_id
     transcript_id
     krs_id
     student_id
-    coordinator_id
-    mentor_id
+    supervisor_id
     status
         0 submit
         1 approve
@@ -113,15 +115,49 @@ create table internship
     start_date      timestamp    not null,
     end_date        timestamp    not null,
     student_id      bigint       not null,
-    mentor_id       bigint,
+    supervisor_id       bigint,
     transcript_id   bigint       not null,
     krs_id          bigint       not null,
-    statement_id     bigint not null,
+    statement_id     bigint     not null,
     status          integer     DEFAULT 0 not null,
     created_by      varchar(64)  not null,
     created_at      timestamp    not null,
     updated_by      varchar(64),
-    updated_at      timestamp
+    updated_at      timestamp,
+    CONSTRAINT fk_student FOREIGN KEY(student_id) REFERENCES users(id),
+    CONSTRAINT fk_transcript FOREIGN KEY(transcript_id) REFERENCES users_document(id),
+    CONSTRAINT fk_krs FOREIGN KEY(krs_id) REFERENCES users_document(id),
+    CONSTRAINT fk_statement FOREIGN KEY(statement_id) REFERENCES users_document(id),
+);
+
+create table internship_seminar
+(
+    id              bigserial   primary key,
+    internship_id   bigint  not null,
+    -- title           varchar(512) not null,
+    -- description     text,
+    -- company_name    varchar(128) not null,
+    -- company_address varchar(128) not null,
+    -- company_phone   varchar(128) not null,
+    -- start_date      timestamp    not null,
+    -- end_date        timestamp    not null,
+    -- student_id      bigint       not null,
+    -- mentor_id       bigint       not null,
+    -- transcript_id   bigint       not null,
+    -- krs_id          bigint       not null,
+    registration_id bigint       not null,
+    report_id       bigint       not null,
+    assessment_sheet_id bigint      not null,
+    schedule        timestamp,
+    status          integer     DEFAULT 0 not null,
+    created_by      varchar(64)  not null,
+    created_at      timestamp    not null,
+    updated_by      varchar(64),
+    updated_at      timestamp,
+    CONSTRAINT fk_internsip FOREIGN KEY(internship_id) REFERENCES internship(id),
+    CONSTRAINT fk_registration FOREIGN KEY(registration_id) REFERENCES users_document(id),
+    CONSTRAINT fk_report FOREIGN KEY(report_id) REFERENCES users_document(id),
+    CONSTRAINT fk_assessment FOREIGN KEY(assessment_sheet_id) REFERENCES users_document(id),
 );
 
 final_project
@@ -189,33 +225,6 @@ create table notification
     updated_by      varchar(64),
     updated_at      timestamp,
     CONSTRAINT fk_users FOREIGN KEY(users_id) REFERENCES users(id)
-);
-
-create table internship_seminar
-(
-    id              bigserial   primary key,
-    title           varchar(512) not null,
-    description     text,
-    company_name    varchar(128) not null,
-    company_address varchar(128) not null,
-    company_phone   varchar(128) not null,
-    start_date      timestamp    not null,
-    end_date        timestamp    not null,
-    student_id      bigint       not null,
-    mentor_id       bigint       not null,
-    transcript_id   bigint       not null,
-    krs_id          bigint       not null,
-    registration_id bigint       not null,
-    report_id       bigint       not null,
-    assessment_sheet_id bigint      not null,
-    examiner1_id     bigint,
-    examiner2_id     bigint,
-    schedule        timestamp,
-    status          integer     DEFAULT 0 not null,
-    created_by      varchar(64)  not null,
-    created_at      timestamp    not null,
-    updated_by      varchar(64),
-    updated_at      timestamp
 );
 
 create table final_project_seminar

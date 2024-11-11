@@ -63,8 +63,13 @@
                         <th style="width: 150px">Tempat</th>
                         <th style="width: 100px">Mulai</th>
                         <th style="width: 100px">Berakhir</th>
+                        <th style="width: 100px">Pembimbing</th>
                         <th class="text-center">Status</th>
-                        <th class="text-center" style="min-width: 230px">Action</th>
+                        @if (Auth::user()->hasRole('student'))
+                            <th class="text-center" style="width: 165px">Action</th>
+                        @else
+                            <th class="text-center" style="width: 300px">Action</th>
+                        @endif
                     </tr>
                 </thead>
                 <tbody>
@@ -84,6 +89,7 @@
                                 <td>
                                     {{ \Carbon\Carbon::parse($item->end_date)->timezone(session('timezone', 'Asia/Jakarta'))->format('d M Y') }}
                                 </td>
+                                <td>{{ $item->supervisor_name }}</td>
                                 <td class="text-center">
                                     @if ($item->status == 0)
                                         <span class="badge bg-info">Submited</span>

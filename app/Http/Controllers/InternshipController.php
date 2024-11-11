@@ -31,25 +31,27 @@ class InternshipController extends Controller
     public function index(Request $request)
     {
         $user = Auth::user();
-        $query = null;
+        $query = DB::table('internship as i')
+            ->select(
+                'i.*',
+                'u.username',
+                'u.name',
+                DB::raw("(SELECT u.name 
+                        FROM users u
+                        WHERE u.id = i.supervisor_id LIMIT 1) AS supervisor_name"),
+            )
+            ->leftjoin('users as u', 'u.id', '=', 'i.student_id')
+            ->orderBy('created_at', 'asc');
 
         if ($user->hasRole('student')) {
-            $query = DB::table('internship')
-                ->select('*')
-                ->where('student_id', '=', $user->id)
-                ->orderBy('created_at', 'asc');
-        } else {
-            $query = DB::table('internship as i')
-                ->select('i.*', 'u.username', 'u.name')
-                ->leftjoin('users as u', 'u.id', '=', 'i.student_id')
-                ->orderBy('created_at', 'asc');
+            $query->where('student_id', '=', $user->id);
+        }
 
-            if ($request->keyword) {
-                $query->where('u.username', 'ilike', "%" . $request->keyword . "%");
-                $query->orWhere('u.name', 'ilike', "%" . $request->keyword . "%");
-                $query->orWhere('i.title', 'ilike', "%" . $request->keyword . "%");
-                $query->orWhere('i.description', 'ilike', "%" . $request->keyword . "%");
-            }
+        if ($request->keyword) {
+            $query->where('u.username', 'ilike', "%" . $request->keyword . "%");
+            $query->orWhere('u.name', 'ilike', "%" . $request->keyword . "%");
+            $query->orWhere('i.title', 'ilike', "%" . $request->keyword . "%");
+            $query->orWhere('i.description', 'ilike', "%" . $request->keyword . "%");
         }
 
         $data = $query->paginate(15);
@@ -71,7 +73,7 @@ class InternshipController extends Controller
                 'u.name',
                 DB::raw("(SELECT u.name 
                     FROM users u
-                    WHERE u.id = i.mentor_id LIMIT 1) AS mentor_name"),
+                    WHERE u.id = i.supervisor_id LIMIT 1) AS supervisor_name"),
                 DB::raw("(SELECT n.message
                     FROM notification n
                     WHERE n.entity_id = i.id
@@ -137,14 +139,14 @@ class InternshipController extends Controller
      */
     public function create()
     {
-        $mentorInternships = DB::table('users as u')
+        $supervisors = DB::table('users as u')
             ->select(
                 'u.id',
                 'u.username',
                 'u.name',
                 DB::raw("(SELECT ua.attribute_value
                     FROM users_attribute ua
-                    WHERE u.id = ua.users_id AND ua.attribute_value = 'pembimbing_kp' LIMIT 1) AS mentor_internship"),
+                    WHERE u.id = ua.users_id AND ua.attribute_value = 'pembimbing_kp' LIMIT 1) AS supervisor"),
             )
             ->leftJoin('users_attribute', 'u.id', '=', 'users_attribute.users_id')
             ->whereIn('attribute_value', ['pembimbing_kp'])
@@ -152,7 +154,7 @@ class InternshipController extends Controller
             ->get();
 
         return view('internship/create', [
-            'mentorInternships' => $mentorInternships,
+            'supervisors' => $supervisors,
         ]);
     }
 
@@ -186,13 +188,13 @@ class InternshipController extends Controller
                 mkdir($path, 0775, true);
             }
 
-            $mentorInternshipID = null;
+            $supervisorID = null;
             $statementID = null;
             $trancriptID = null;
             $krsID = null;
 
-            if (isset($request->mentor)) {
-                $mentorInternshipID = $request->mentor;
+            if (isset($request->supervisor)) {
+                $supervisorID = $request->supervisor;
             }
 
             if (isset($request->transcript)) {
@@ -261,7 +263,7 @@ class InternshipController extends Controller
                 'start_date' => $start_date->toDateTimeString(),
                 'end_date' => $end_date->toDateTimeString(),
                 'student_id' => Auth::user()->id,
-                'mentor_id' => $mentorInternshipID,
+                'supervisor_id' => $supervisorID,
                 'transcript_id' => $trancriptID,
                 'krs_id' => $krsID,
                 'statement_id' => $statementID,
@@ -286,14 +288,14 @@ class InternshipController extends Controller
      */
     public function edit($id, Request $request)
     {
-        $mentorInternships = DB::table('users as u')
+        $supervisors = DB::table('users as u')
             ->select(
                 'u.id',
                 'u.username',
                 'u.name',
                 DB::raw("(SELECT ua.attribute_value
                     FROM users_attribute ua
-                    WHERE u.id = ua.users_id AND ua.attribute_value = 'pembimbing_kp' LIMIT 1) AS mentor_internship"),
+                    WHERE u.id = ua.users_id AND ua.attribute_value = 'pembimbing_kp' LIMIT 1) AS supervisor"),
             )
             ->leftJoin('users_attribute', 'u.id', '=', 'users_attribute.users_id')
             ->whereIn('attribute_value', ['pembimbing_kp'])
@@ -307,10 +309,10 @@ class InternshipController extends Controller
                 'u.name',
                 DB::raw("(SELECT u.id 
                     FROM users u
-                    WHERE u.id = i.mentor_id LIMIT 1) AS mentor_id"),
+                    WHERE u.id = i.supervisor_id LIMIT 1) AS supervisor_id"),
                 DB::raw("(SELECT u.name 
                     FROM users u
-                    WHERE u.id = i.mentor_id LIMIT 1) AS mentor_name"),
+                    WHERE u.id = i.supervisor_id LIMIT 1) AS supervisor_name"),
                 DB::raw("(SELECT n.message
                     FROM notification n
                     WHERE n.entity_id = i.id
@@ -369,7 +371,7 @@ class InternshipController extends Controller
         return view('internship/edit', [
             'id' => $id,
             'data' => $query,
-            'mentorInternships' => $mentorInternships,
+            'supervisors' => $supervisors,
         ]);
     }
 
@@ -403,13 +405,13 @@ class InternshipController extends Controller
                 mkdir($path, 0775, true);
             }
 
-            $mentorInternshipID = $request->mentor_id ?? null;
+            $supervisorID = $request->supervisor_id ?? null;
             $statementID = $request->statement_id ?? null;
             $trancriptID = $request->transcript_id ?? null;
             $krsID = $request->krs_id ?? null;
 
-            if (isset($request->mentor)) {
-                $mentorInternshipID = $request->mentor;
+            if (isset($request->supervisor)) {
+                $supervisorID = $request->supervisor;
             }
 
             if (isset($request->transcript)) {
@@ -479,7 +481,7 @@ class InternshipController extends Controller
                     'company_phone' => $request->company_phone,
                     'start_date' => $start_date->toDateTimeString(),
                     'end_date' => $end_date->toDateTimeString(),
-                    'mentor_id' => $mentorInternshipID,
+                    'supervisor_id' => $supervisorID,
                     'transcript_id' => $trancriptID,
                     'krs_id' => $krsID,
                     'statement_id' => $statementID,

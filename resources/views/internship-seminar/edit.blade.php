@@ -150,14 +150,13 @@
                                 Judul
                             </label>
                             <div class="col-sm-9">
-                                <input type="text" class="form-control" name="title" value="{{ $data->title }}"
-                                    readonly>
+                                <input type="text" class="form-control" name="title" value="{{ $data->title }}">
                             </div>
                         </div>
                         <div class="form-group row">
                             <label for="" class="col-sm-3 col-form-label">Deskripsi</label>
                             <div class="col-sm-9">
-                                <textarea class="form-control" name="description" rows="5" readonly>{{ $data->description }}</textarea>
+                                <textarea class="form-control" name="description" rows="5">{{ $data->description }}</textarea>
                             </div>
                         </div>
                         <div class="form-group row">
@@ -166,7 +165,7 @@
                             </label>
                             <div class="col-sm-9">
                                 <input type="text" class="form-control" name="company_name"
-                                    value="{{ $data->company_name }}" readonly>
+                                    value="{{ $data->company_name }}">
                             </div>
                         </div>
                         <div class="form-group row">
@@ -176,7 +175,7 @@
                             </label>
                             <div class="col-sm-9">
                                 <input type="text" class="form-control" name="company_address"
-                                    value="{{ $data->company_address }}" readonly>
+                                    value="{{ $data->company_address }}">
                             </div>
                         </div>
                         <div class="form-group row">
@@ -186,8 +185,7 @@
                             </label>
                             <div class="col-sm-9">
                                 <input type="number" class="form-control" name="company_phone" pattern="\d*"
-                                    oninput="this.value = this.value.slice(0, 13);" value="{{ $data->company_phone }}"
-                                    readonly>
+                                    oninput="this.value = this.value.slice(0, 13);" value="{{ $data->company_phone }}">
                             </div>
                         </div>
                         <div class="form-group row">
@@ -202,8 +200,7 @@
                                     </div>
                                     <input type="text" class="form-control" name="start_date" id="datemask1"
                                         data-inputmask-alias="datetime" data-inputmask-inputformat="dd/mm/yyyy" data-mask
-                                        value="{{ \Carbon\Carbon::parse($data->start_date)->timezone(session('timezone', 'Asia/Jakarta'))->format('d/m/Y') }}"
-                                        readonly>
+                                        value="{{ \Carbon\Carbon::parse($data->start_date)->timezone(session('timezone', 'Asia/Jakarta'))->format('d/m/Y') }}">
                                 </div>
                             </div>
                         </div>
@@ -219,8 +216,7 @@
                                     </div>
                                     <input type="text" class="form-control" name="end_date" id="datemask2"
                                         data-inputmask-alias="datetime" data-inputmask-inputformat="dd/mm/yyyy" data-mask
-                                        value="{{ \Carbon\Carbon::parse($data->end_date)->timezone(session('timezone', 'Asia/Jakarta'))->format('d/m/Y') }}"
-                                        readonly>
+                                        value="{{ \Carbon\Carbon::parse($data->end_date)->timezone(session('timezone', 'Asia/Jakarta'))->format('d/m/Y') }}">
                                 </div>
                             </div>
                         </div>

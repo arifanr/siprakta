@@ -332,6 +332,23 @@ class InternshipSeminarController extends Controller
                     ]);
             }
 
+            $start_date = Carbon::createFromFormat('d/m/Y', $request->start_date);
+            $end_date = Carbon::createFromFormat('d/m/Y', $request->end_date);
+
+            DB::table('internship')
+                ->where('id', '=', $request->internship_id)
+                ->update([
+                    'title' => $request->title,
+                    'description' => $request->description,
+                    'company_name' => $request->company_name,
+                    'company_address' => $request->company_address,
+                    'company_phone' => $request->company_phone,
+                    'start_date' => $start_date->toDateTimeString(),
+                    'end_date' => $end_date->toDateTimeString(),
+                    'updated_by' => Auth::user()->username,
+                    'updated_at' => Carbon::now('UTC')
+                ]);
+
             DB::table('internship_seminar')->insert([
                 'internship_id' => $request->internship_id,
                 'registration_id' => $registrationID,
@@ -577,6 +594,23 @@ class InternshipSeminarController extends Controller
                         'updated_at' => Carbon::now('UTC')
                     ]);
             }
+
+            $start_date = Carbon::createFromFormat('d/m/Y', $request->start_date);
+            $end_date = Carbon::createFromFormat('d/m/Y', $request->end_date);
+
+            DB::table('internship')
+                ->where('id', '=', $request->internship_id)
+                ->update([
+                    'title' => $request->title,
+                    'description' => $request->description,
+                    'company_name' => $request->company_name,
+                    'company_address' => $request->company_address,
+                    'company_phone' => $request->company_phone,
+                    'start_date' => $start_date->toDateTimeString(),
+                    'end_date' => $end_date->toDateTimeString(),
+                    'updated_by' => Auth::user()->username,
+                    'updated_at' => Carbon::now('UTC')
+                ]);
 
             DB::table('internship_seminar')
                 ->where('id', '=', $id)

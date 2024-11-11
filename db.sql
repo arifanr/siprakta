@@ -184,8 +184,8 @@ create table final_project
     title           varchar(512) not null,
     description     text,
     student_id      bigint       not null,
-    mentor1_id       bigint,
-    mentor2_id       bigint,
+    supervisor1_id       bigint,
+    supervisor2_id       bigint,
     transcript_id   bigint       not null,
     krs_id          bigint       not null,
     proposal_id     bigint,
@@ -193,7 +193,32 @@ create table final_project
     created_by      varchar(64)  not null,
     created_at      timestamp    not null,
     updated_by      varchar(64),
-    updated_at      timestamp
+    updated_at      timestamp,
+    CONSTRAINT fk_student FOREIGN KEY(student_id) REFERENCES users(id),
+    CONSTRAINT fk_transcript FOREIGN KEY(transcript_id) REFERENCES users_document(id),
+    CONSTRAINT fk_krs FOREIGN KEY(krs_id) REFERENCES users_document(id),
+    CONSTRAINT fk_proposal FOREIGN KEY(proposal_id) REFERENCES users_document(id),
+);
+
+create table final_project_seminar
+(
+    id              bigserial   primary key,
+    final_project_id    bigint not null,
+    registration_id bigint       not null,
+    report_id     bigint not null,
+    examiner1_id     bigint,
+    examiner2_id     bigint,
+    examiner3_id     bigint,
+    schedule        timestamp,
+    grade           varchar(12),
+    status          integer     DEFAULT 0 not null,
+    created_by      varchar(64)  not null,
+    created_at      timestamp    not null,
+    updated_by      varchar(64),
+    updated_at      timestamp,
+    CONSTRAINT fk_final_project FOREIGN KEY(final_project_id) REFERENCES final_project(id),
+    CONSTRAINT fk_registration FOREIGN KEY(registration_id) REFERENCES users_document(id),
+    CONSTRAINT fk_report FOREIGN KEY(report_id) REFERENCES users_document(id),
 );
 
 notification
@@ -226,27 +251,4 @@ create table notification
     updated_by      varchar(64),
     updated_at      timestamp,
     CONSTRAINT fk_users FOREIGN KEY(users_id) REFERENCES users(id)
-);
-
-create table final_project_seminar
-(
-    id              bigserial   primary key,
-    title           varchar(512) not null,
-    description     text,
-    student_id      bigint       not null,
-    mentor1_id       bigint,
-    mentor2_id       bigint,
-    transcript_id   bigint       not null,
-    krs_id          bigint       not null,
-    registration_id bigint       not null,
-    report_id     bigint not null,
-    examiner1_id     bigint,
-    examiner2_id     bigint,
-    examiner3_id     bigint,
-    schedule        timestamp,
-    status          integer     DEFAULT 0 not null,
-    created_by      varchar(64)  not null,
-    created_at      timestamp    not null,
-    updated_by      varchar(64),
-    updated_at      timestamp
 );

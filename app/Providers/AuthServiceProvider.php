@@ -37,6 +37,12 @@ class AuthServiceProvider extends ServiceProvider
             ]);
         });
 
+        Gate::define('status', function($user){
+            return $user->hasAnyRoles([
+                'student',
+            ]);
+        });
+
         Gate::define('ApproveDenyInternship', function($user){
             return $user->hasAnyRoles([
                 'admin',

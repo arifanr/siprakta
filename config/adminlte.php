@@ -313,7 +313,10 @@ return [
             'icon' => 'fas fa-fw fa-home',
             // 'can' => 'manage-blog',
         ],
-        ['header' => 'KERJA PRAKTIK', 'classes' => 'text-bold'],
+        [
+            'header' => 'KERJA PRAKTIK', 
+            'classes' => 'text-bold',
+        ],
         [
             'text' => 'Daftar KP',
             'route' => 'internship.list',
@@ -327,7 +330,10 @@ return [
             'active' => ['internship-seminar', 'internship-seminar/*',]
         ],
         ['header' => ''],
-        ['header' => 'TUGAS AKHIR', 'classes' => 'text-bold'],
+        [
+            'header' => 'TUGAS AKHIR', 
+            'classes' => 'text-bold',
+        ],
         [
             'text' => 'Daftar TA',
             'route' => 'finalproject.list',

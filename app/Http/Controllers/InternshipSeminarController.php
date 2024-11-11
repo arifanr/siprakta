@@ -31,18 +31,18 @@ class InternshipSeminarController extends Controller
     public function index(Request $request)
     {
         $user = Auth::user();
-        $query = DB::table('internship_seminar as i')
+        $query = DB::table('internship_seminar as is')
             ->select(
-                'i.*',
+                'i.title',
+                'i.company_name',
+                'is.*',
                 'u.username',
                 'u.name',
                 DB::raw("(SELECT u.name 
                     FROM users u
-                    WHERE u.id = i.examiner1_id LIMIT 1) AS examiner1"),
-                DB::raw("(SELECT u.name 
-                    FROM users u
-                    WHERE u.id = i.examiner2_id LIMIT 1) AS examiner2"),
+                    WHERE u.id = i.supervisor_id LIMIT 1) AS supervisor"),
             )
+            ->leftJoin('internship as i', 'i.id', '=', 'is.internship_id')
             ->leftjoin('users as u', 'u.id', '=', 'i.student_id')
             ->orderBy('created_at', 'asc');
 
@@ -69,30 +69,47 @@ class InternshipSeminarController extends Controller
      */
     public function detail($id)
     {
-        $query = DB::table('internship_seminar as i')
+        $query = DB::table('internship_seminar as is')
             ->select(
-                'i.*',
+                'i.title',
+                'i.description',
+                'i.company_name',
+                'i.company_address',
+                'i.company_phone',
+                'i.start_date',
+                'i.end_date',
+                'i.company_name',
+                'i.transcript_id',
+                'i.krs_id',
+                'i.statement_id',
+                'is.*',
                 'u.username',
                 'u.name',
+                'statement_document.name as statement_name',
+                'statement_document.location as statement_url',
+                'registration_document.name as registration_name',
+                'registration_document.location as registration_url',
+                'krs_document.name as krs_name',
+                'krs_document.location as krs_url',
+                'transcript_document.name as transcript_name',
+                'transcript_document.location as transcript_url',
+                'report_document.name as report_name',
+                'report_document.location as report_url',
+                'assessment_document.name as assessment_name',
+                'assessment_document.location as assessment_url',
+                'n.message as reason',
+                DB::raw("(SELECT u.id 
+                    FROM users u
+                    WHERE u.id = i.supervisor_id LIMIT 1) AS supervisor_id"),
                 DB::raw("(SELECT u.name 
                     FROM users u
-                    WHERE u.id = i.mentor_id LIMIT 1) AS mentor_name"),
-                DB::raw("(SELECT u.name 
-                    FROM users u
-                    WHERE u.id = i.examiner1_id LIMIT 1) AS examiner1"),
-                DB::raw("(SELECT u.name 
-                    FROM users u
-                    WHERE u.id = i.examiner2_id LIMIT 1) AS examiner2"),
-                DB::raw("(SELECT n.message
-                    FROM notification n
-                    WHERE n.entity_id = i.id
-                    ORDER BY n.created_at desc LIMIT 1) AS reason"),
+                    WHERE u.id = i.supervisor_id LIMIT 1) AS supervisor_name"),
                 DB::raw("(SELECT ud.name
                     FROM users_document ud
-                    WHERE ud.id = i.registration_id LIMIT 1) AS registration_name"),
+                    WHERE ud.id = i.statement_id LIMIT 1) AS statement_name"),
                 DB::raw("(SELECT ud.location
                     FROM users_document ud
-                    WHERE ud.id = i.registration_id LIMIT 1) AS registration_url"),
+                    WHERE ud.id = i.statement_id LIMIT 1) AS statement_url"),
                 DB::raw("(SELECT ud.name
                     FROM users_document ud
                     WHERE ud.id = i.krs_id LIMIT 1) AS krs_name"),
@@ -105,48 +122,49 @@ class InternshipSeminarController extends Controller
                 DB::raw("(SELECT ud.location
                     FROM users_document ud
                     WHERE ud.id = i.transcript_id LIMIT 1) AS transcript_url"),
-                DB::raw("(SELECT ud.name
-                    FROM users_document ud
-                    WHERE ud.id = i.report_id LIMIT 1) AS report_name"),
-                DB::raw("(SELECT ud.location
-                    FROM users_document ud
-                    WHERE ud.id = i.report_id LIMIT 1) AS report_url"),
-                DB::raw("(SELECT ud.name
-                    FROM users_document ud
-                    WHERE ud.id = i.assessment_sheet_id LIMIT 1) AS assessment_name"),
-                DB::raw("(SELECT ud.location
-                    FROM users_document ud
-                    WHERE ud.id = i.assessment_sheet_id LIMIT 1) AS assessment_url"),
             )
-            ->where('i.id', '=', $id)
+            ->where('is.id', '=', $id)
+            ->leftjoin('internship as i', 'i.id', '=', 'is.internship_id')
             ->leftjoin('users as u', 'u.id', '=', 'i.student_id')
+            ->leftJoin('users_document as statement_document', 'statement_document.id', '=', 'i.statement_id')
+            ->leftJoin('users_document as registration_document', 'registration_document.id', '=', 'is.registration_id')
+            ->leftJoin('users_document as krs_document', 'krs_document.id', '=', 'i.krs_id')
+            ->leftJoin('users_document as transcript_document', 'transcript_document.id', '=', 'i.transcript_id')
+            ->leftJoin('users_document as report_document', 'report_document.id', '=', 'is.report_id')
+            ->leftJoin('users_document as assessment_document', 'assessment_document.id', '=', 'is.assessment_sheet_id')
+            ->leftjoin('notification as n',function($join) {
+                $join->on('n.entity_id', '=', 'is.id')
+                ->where('n.entity', '=', 'internship_seminar');
+            })
             ->orderBy('created_at', 'asc')
             ->first();
 
         if (!$query) {
             return redirect()
                 ->route('internship-seminar.list')
-                ->with('failed', '');
+                ->with('failed', 'Data tidak ditemukan');
         }
 
         $user = Auth::user();
         $own = null;
 
         if ($user->hasRole('student')) {
-            $own = DB::table('internship_seminar as i')
-                ->where('student_id', '=', $user->id)
+            $own = DB::table('internship_seminar as is')
+                ->leftjoin('internship as i', 'i.id', '=', 'is.internship_id')
+                ->where('is.id', '=', $id)
+                ->where('i.student_id', '=', $user->id)
                 ->first();
 
             if (!$own) {
                 return redirect()
                     ->route('internship-seminar.list')
-                    ->with('failed', '');
+                    ->with('error', 'das');
             }
 
-            if ($own->id != $query->id) {
+            if ($own->id != $query->internship_id) {
                 return redirect()
                     ->route('internship-seminar.list')
-                    ->with('failed', '');
+                    ->with('error', 'da');
             }
         }
 
@@ -160,37 +178,59 @@ class InternshipSeminarController extends Controller
      */
     public function create()
     {
-        $mentorInternships = DB::table('users as u')
+        $user = Auth::user();
+        $supervisors = DB::table('users as u')
             ->select(
                 'u.id',
                 'u.username',
                 'u.name',
                 DB::raw("(SELECT ua.attribute_value
                     FROM users_attribute ua
-                    WHERE u.id = ua.users_id AND ua.attribute_value = 'pembimbing_kp' LIMIT 1) AS mentor_internship"),
+                    WHERE u.id = ua.users_id AND ua.attribute_value = 'pembimbing_kp' LIMIT 1) AS supervisor"),
             )
             ->leftJoin('users_attribute', 'u.id', '=', 'users_attribute.users_id')
             ->whereIn('attribute_value', ['pembimbing_kp'])
             ->where('flag_delete', '=', 0)
             ->get();
 
-        $examiners = DB::table('users as u')
+        $internship = DB::table('internship as i')
             ->select(
-                'u.id',
-                'u.username',
-                'u.name',
-                DB::raw("(SELECT ua.attribute_value
-                    FROM users_attribute ua
-                    WHERE u.id = ua.users_id AND ua.attribute_value = 'penguji_kp' LIMIT 1) AS examiner"),
+                'i.*',
+                DB::raw("(SELECT u.id
+                    FROM users u
+                    WHERE u.id = i.supervisor_id LIMIT 1) AS supervisor"),
+                DB::raw("(SELECT ud.name
+                    FROM users_document ud
+                    WHERE ud.id = i.statement_id LIMIT 1) AS statement_name"),
+                DB::raw("(SELECT ud.location
+                    FROM users_document ud
+                    WHERE ud.id = i.statement_id LIMIT 1) AS statement_url"),
+                DB::raw("(SELECT ud.name
+                    FROM users_document ud
+                    WHERE ud.id = i.krs_id LIMIT 1) AS krs_name"),
+                DB::raw("(SELECT ud.location
+                    FROM users_document ud
+                    WHERE ud.id = i.krs_id LIMIT 1) AS krs_url"),
+                DB::raw("(SELECT ud.name
+                    FROM users_document ud
+                    WHERE ud.id = i.transcript_id LIMIT 1) AS transcript_name"),
+                DB::raw("(SELECT ud.location
+                    FROM users_document ud
+                    WHERE ud.id = i.transcript_id LIMIT 1) AS transcript_url"),
             )
-            ->leftJoin('users_attribute', 'u.id', '=', 'users_attribute.users_id')
-            ->whereIn('attribute_value', ['penguji_kp'])
-            ->where('flag_delete', '=', 0)
-            ->get();
+            ->where('i.student_id', '=', $user->id)
+            ->where('i.status', '=', 1)
+            ->first();
+
+        if (!$internship) {
+            return redirect()
+                ->route('internship.list')
+                ->with('error', 'Anda harus mendaftar KP terlebih dahulu dan telah disetujui oleh koordinator');
+        }
 
         return view('internship-seminar/create', [
-            'mentorInternships' => $mentorInternships,
-            'examiners' => $examiners,
+            'data' => $internship,
+            'supervisors' => $supervisors,
         ]);
     }
 
@@ -200,8 +240,6 @@ class InternshipSeminarController extends Controller
     public function save(Request $request)
     {
         $rules = [
-            'transcript' => 'required|file|mimes:webp,jpeg,jpg,png,pdf|max:10240',
-            'krs' => 'required|file|mimes:webp,jpeg,jpg,png,pdf|max:10240',
             'registration' => 'file|mimes:webp,jpeg,jpg,png,pdf|max:10240',
             'report' => 'required|file|mimes:webp,jpeg,jpg,png,pdf|max:10240',
             'assessment_sheet' => 'required|file|mimes:webp,jpeg,jpg,png,pdf|max:10240',
@@ -226,52 +264,9 @@ class InternshipSeminarController extends Controller
                 mkdir($path, 0775, true);
             }
 
-            $mentorID = null;
             $registrationID = null;
-            $trancriptID = null;
-            $krsID = null;
             $reportID = null;
             $assessmentID = null;
-
-            if (isset($request->mentor)) {
-                $mentorID = $request->mentor;
-            }
-
-            if (isset($request->transcript)) {
-                $file = $request->file('transcript');
-                $originalName = $file->getClientOriginalName();
-                $extension = $file->getClientOriginalExtension();
-                $fileName = Str::random(20) . '.' . $extension;
-
-                file_put_contents($path . '/' . $fileName, file_get_contents($file));
-
-                $trancriptID = DB::table('users_document')->insertGetId([
-                    'name' => $originalName,
-                    'type' => 'transcript',
-                    'location' => $path . '/' . $fileName,
-                    'users_id' => Auth::user()->id,
-                    'created_by' => Auth::user()->username,
-                    'created_at' => Carbon::now('UTC')
-                ]);
-            }
-
-            if (isset($request->krs)) {
-                $file = $request->file('krs');
-                $originalName = $file->getClientOriginalName();
-                $extension = $file->getClientOriginalExtension();
-                $fileName = Str::random(20) . '.' . $extension;
-
-                file_put_contents($path . '/' . $fileName, file_get_contents($file));
-
-                $krsID = DB::table('users_document')->insertGetId([
-                    'name' => $originalName,
-                    'type' => 'krs',
-                    'location' => $path . '/' . $fileName,
-                    'users_id' => Auth::user()->id,
-                    'created_by' => Auth::user()->username,
-                    'created_at' => Carbon::now('UTC')
-                ]);
-            }
 
             if (isset($request->registration)) {
                 $file = $request->file('registration');
@@ -327,21 +322,18 @@ class InternshipSeminarController extends Controller
                 ]);
             }
 
-            $start_date = Carbon::createFromFormat('d/m/Y', $request->start_date);
-            $end_date = Carbon::createFromFormat('d/m/Y', $request->end_date);
+            if (isset($request->supervisor)) {
+                DB::table('internship')
+                    ->where('id', '=', $request->internship_id)
+                    ->update([
+                        'supervisor_id' => $request->supervisor,
+                        'updated_by' => Auth::user()->username,
+                        'updated_at' => Carbon::now('UTC')
+                    ]);
+            }
 
             DB::table('internship_seminar')->insert([
-                'title' => $request->title,
-                'description' => $request->description,
-                'company_name' => $request->company_name,
-                'company_address' => $request->company_address,
-                'company_phone' => $request->company_phone,
-                'start_date' => $start_date->toDateTimeString(),
-                'end_date' => $end_date->toDateTimeString(),
-                'student_id' => Auth::user()->id,
-                'mentor_id' => $mentorID,
-                'transcript_id' => $trancriptID,
-                'krs_id' => $krsID,
+                'internship_id' => $request->internship_id,
                 'registration_id' => $registrationID,
                 'report_id' => $reportID,
                 'assessment_sheet_id' => $assessmentID,
@@ -366,64 +358,61 @@ class InternshipSeminarController extends Controller
      */
     public function edit($id, Request $request)
     {
-        $mentorInternships = DB::table('users as u')
+        $supervisors = DB::table('users as u')
             ->select(
                 'u.id',
                 'u.username',
                 'u.name',
                 DB::raw("(SELECT ua.attribute_value
                     FROM users_attribute ua
-                    WHERE u.id = ua.users_id AND ua.attribute_value = 'pembimbing_kp' LIMIT 1) AS mentor_internship"),
+                    WHERE u.id = ua.users_id AND ua.attribute_value = 'pembimbing_kp' LIMIT 1) AS supervisor"),
             )
             ->leftJoin('users_attribute', 'u.id', '=', 'users_attribute.users_id')
             ->whereIn('attribute_value', ['pembimbing_kp'])
             ->where('flag_delete', '=', 0)
             ->get();
 
-        $examiners = DB::table('users as u')
+        $query = DB::table('internship_seminar as is')
             ->select(
-                'u.id',
+                'i.title',
+                'i.description',
+                'i.company_name',
+                'i.company_address',
+                'i.company_phone',
+                'i.start_date',
+                'i.end_date',
+                'i.company_name',
+                'i.transcript_id',
+                'i.krs_id',
+                'i.statement_id',
+                'is.*',
                 'u.username',
                 'u.name',
-                DB::raw("(SELECT ua.attribute_value
-                    FROM users_attribute ua
-                    WHERE u.id = ua.users_id AND ua.attribute_value = 'penguji_kp' LIMIT 1) AS examiner"),
-            )
-            ->leftJoin('users_attribute', 'u.id', '=', 'users_attribute.users_id')
-            ->whereIn('attribute_value', ['penguji_kp'])
-            ->where('flag_delete', '=', 0)
-            ->get();
-
-        $query = DB::table('internship_seminar as i')
-            ->select(
-                'i.*',
-                'u.username',
-                'u.name',
-                DB::raw("(SELECT u.name 
-                    FROM users u
-                    WHERE u.id = i.mentor_id LIMIT 1) AS mentor_name"),
+                'statement_document.name as statement_name',
+                'statement_document.location as statement_url',
+                'registration_document.name as registration_name',
+                'registration_document.location as registration_url',
+                'krs_document.name as krs_name',
+                'krs_document.location as krs_url',
+                'transcript_document.name as transcript_name',
+                'transcript_document.location as transcript_url',
+                'report_document.name as report_name',
+                'report_document.location as report_url',
+                'assessment_document.name as assessment_name',
+                'assessment_document.location as assessment_url',
+                
                 DB::raw("(SELECT u.id 
                     FROM users u
-                    WHERE u.id = i.examiner1_id LIMIT 1) AS examiner1_id"),
-                DB::raw("(SELECT u.id 
-                    FROM users u
-                    WHERE u.id = i.examiner2_id LIMIT 1) AS examiner2_id"),
+                    WHERE u.id = i.supervisor_id LIMIT 1) AS supervisor_id"),
                 DB::raw("(SELECT u.name 
                     FROM users u
-                    WHERE u.id = i.examiner1_id LIMIT 1) AS examiner1"),
-                DB::raw("(SELECT u.name 
-                    FROM users u
-                    WHERE u.id = i.examiner2_id LIMIT 1) AS examiner2"),
-                DB::raw("(SELECT n.message
-                    FROM notification n
-                    WHERE n.entity_id = i.id
-                    ORDER BY n.created_at desc LIMIT 1) AS reason"),
+                    WHERE u.id = i.supervisor_id LIMIT 1) AS supervisor_name"),
                 DB::raw("(SELECT ud.name
                     FROM users_document ud
-                    WHERE ud.id = i.registration_id LIMIT 1) AS registration_name"),
+                    WHERE ud.id = i.statement_id LIMIT 1) AS statement_name"),
                 DB::raw("(SELECT ud.location
                     FROM users_document ud
-                    WHERE ud.id = i.registration_id LIMIT 1) AS registration_url"),
+                    WHERE ud.id = i.statement_id LIMIT 1) AS statement_url"),
                 DB::raw("(SELECT ud.name
                     FROM users_document ud
                     WHERE ud.id = i.krs_id LIMIT 1) AS krs_name"),
@@ -436,56 +425,52 @@ class InternshipSeminarController extends Controller
                 DB::raw("(SELECT ud.location
                     FROM users_document ud
                     WHERE ud.id = i.transcript_id LIMIT 1) AS transcript_url"),
-                DB::raw("(SELECT ud.name
-                    FROM users_document ud
-                    WHERE ud.id = i.report_id LIMIT 1) AS report_name"),
-                DB::raw("(SELECT ud.location
-                    FROM users_document ud
-                    WHERE ud.id = i.report_id LIMIT 1) AS report_url"),
-                DB::raw("(SELECT ud.name
-                    FROM users_document ud
-                    WHERE ud.id = i.assessment_sheet_id LIMIT 1) AS assessment_name"),
-                DB::raw("(SELECT ud.location
-                    FROM users_document ud
-                    WHERE ud.id = i.assessment_sheet_id LIMIT 1) AS assessment_url"),
             )
-            ->where('i.id', '=', $id)
+            ->where('is.id', '=', $id)
+            ->leftjoin('internship as i', 'i.id', '=', 'is.internship_id')
             ->leftjoin('users as u', 'u.id', '=', 'i.student_id')
+            ->leftJoin('users_document as statement_document', 'statement_document.id', '=', 'i.statement_id')
+            ->leftJoin('users_document as registration_document', 'registration_document.id', '=', 'is.registration_id')
+            ->leftJoin('users_document as krs_document', 'krs_document.id', '=', 'i.krs_id')
+            ->leftJoin('users_document as transcript_document', 'transcript_document.id', '=', 'i.transcript_id')
+            ->leftJoin('users_document as report_document', 'report_document.id', '=', 'is.report_id')
+            ->leftJoin('users_document as assessment_document', 'assessment_document.id', '=', 'is.assessment_sheet_id')
             ->orderBy('created_at', 'asc')
             ->first();
 
         if (!$query) {
             return redirect()
                 ->route('internship-seminar.list')
-                ->with('failed', '');
+                ->with('failed', 'Data tidak ditemukan');
         }
 
         $user = Auth::user();
         $own = null;
 
         if ($user->hasRole('student')) {
-            $own = DB::table('internship_seminar as i')
-                ->where('student_id', '=', $user->id)
+            $own = DB::table('internship_seminar as is')
+                ->leftjoin('internship as i', 'i.id', '=', 'is.internship_id')
+                ->where('is.id', '=', $id)
+                ->where('i.student_id', '=', $user->id)
                 ->first();
 
             if (!$own) {
                 return redirect()
                     ->route('internship-seminar.list')
-                    ->with('failed', '');
+                    ->with('error', 'das');
             }
 
-            if ($own->id != $query->id) {
+            if ($own->id != $query->internship_id) {
                 return redirect()
                     ->route('internship-seminar.list')
-                    ->with('failed', '');
+                    ->with('error', 'da');
             }
         }
 
         return view('internship-seminar/edit', [
             'id' => $id,
             'data' => $query,
-            'mentorInternships' => $mentorInternships,
-            'examiners' => $examiners,
+            'supervisors' => $supervisors,
         ]);
     }
 
@@ -495,8 +480,6 @@ class InternshipSeminarController extends Controller
     public function update($id, Request $request)
     {
         $rules = [
-            'transcript' => 'file|mimes:webp,jpeg,jpg,png,pdf|max:10240',
-            'krs' => 'file|mimes:webp,jpeg,jpg,png,pdf|max:10240',
             'registration' => 'file|mimes:webp,jpeg,jpg,png,pdf|max:10240',
             'report' => 'file|mimes:webp,jpeg,jpg,png,pdf|max:10240',
             'assessment_sheet' => 'file|mimes:webp,jpeg,jpg,png,pdf|max:10240',
@@ -521,63 +504,11 @@ class InternshipSeminarController extends Controller
                 mkdir($path, 0775, true);
             }
 
-            $mentorID = $request->mentor_id ?? null;
-            $examiner1ID = $request->examiner1_id ?? null;
-            $examiner2ID = $request->examiner2_id ?? null;
             $registrationID = $request->registration_id ?? null;
-            $trancriptID = $request->transcript_id ?? null;
-            $krsID = $request->krs_id ?? null;
             $reportID = $request->report_id ?? null;
             $assessmentID = $request->assessment_sheet_id ?? null;
             $schedule = $request->schedule_old ?? null;
 
-            if (isset($request->mentor)) {
-                $mentorID = $request->mentor;
-            }
-
-            if (isset($request->examiner1)) {
-                $examiner1ID = $request->examiner1;
-            }
-
-            if (isset($request->examiner2)) {
-                $examiner2ID = $request->examiner2;
-            }
-
-            if (isset($request->transcript)) {
-                $file = $request->file('transcript');
-                $originalName = $file->getClientOriginalName();
-                $extension = $file->getClientOriginalExtension();
-                $fileName = Str::random(20) . '.' . $extension;
-
-                file_put_contents($path . '/' . $fileName, file_get_contents($file));
-
-                $trancriptID = DB::table('users_document')->insertGetId([
-                    'name' => $originalName,
-                    'type' => 'transcript',
-                    'location' => $path . '/' . $fileName,
-                    'users_id' => Auth::user()->id,
-                    'created_by' => Auth::user()->username,
-                    'created_at' => Carbon::now('UTC')
-                ]);
-            }
-
-            if (isset($request->krs)) {
-                $file = $request->file('krs');
-                $originalName = $file->getClientOriginalName();
-                $extension = $file->getClientOriginalExtension();
-                $fileName = Str::random(20) . '.' . $extension;
-
-                file_put_contents($path . '/' . $fileName, file_get_contents($file));
-
-                $krsID = DB::table('users_document')->insertGetId([
-                    'name' => $originalName,
-                    'type' => 'krs',
-                    'location' => $path . '/' . $fileName,
-                    'users_id' => Auth::user()->id,
-                    'created_by' => Auth::user()->username,
-                    'created_at' => Carbon::now('UTC')
-                ]);
-            }
 
             if (isset($request->registration)) {
                 $file = $request->file('registration');
@@ -633,33 +564,29 @@ class InternshipSeminarController extends Controller
                 ]);
             }
 
-            $start_date = Carbon::createFromFormat('d/m/Y H:i:s', $request->start_date . ' 00:00:00');
-            $end_date = Carbon::createFromFormat('d/m/Y H:i:s', $request->end_date . ' 00:00:00');
-
             if ($request->schedule) {
                 $schedule = Carbon::createFromFormat('d/m/Y H:i', $request->schedule, 'Asia/Jakarta')->utc();
+            }
+
+            if (isset($request->supervisor)) {
+                DB::table('internship')
+                    ->where('id', '=', $request->internship_id)
+                    ->update([
+                        'supervisor_id' => $request->supervisor,
+                        'updated_by' => Auth::user()->username,
+                        'updated_at' => Carbon::now('UTC')
+                    ]);
             }
 
             DB::table('internship_seminar')
                 ->where('id', '=', $id)
                 ->update([
-                    'title' => $request->title,
-                    'description' => $request->description,
-                    'company_name' => $request->company_name,
-                    'company_address' => $request->company_address,
-                    'company_phone' => $request->company_phone,
-                    'start_date' => $start_date->toDateTimeString(),
-                    'end_date' => $end_date->toDateTimeString(),
                     'schedule' => $request->schedule_old ?? ($schedule ? $schedule->toDateTimeString() : null),
-                    'mentor_id' => $mentorID,
-                    'examiner1_id' => $examiner1ID,
-                    'examiner2_id' => $examiner2ID,
-                    'transcript_id' => $trancriptID,
-                    'krs_id' => $krsID,
                     'registration_id' => $registrationID,
                     'report_id' => $reportID,
                     'assessment_sheet_id' => $assessmentID,
                     'status' => 0,
+                    'grade' => $request->grade,
                     'updated_by' => Auth::user()->username,
                     'updated_at' => Carbon::now('UTC')
                 ]);

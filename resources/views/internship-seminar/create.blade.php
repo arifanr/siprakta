@@ -26,97 +26,8 @@
                 <form class="form-horizontal" action="{{ route('internship-seminar.save') }}" method="POST"
                     enctype="multipart/form-data">
                     @csrf
+                    <input type="hidden" name="internship_id" value="{{ $data->id }}">
                     <div class="card-body">
-                        <div class="form-group row">
-                            <label for="" class="col-sm-3 col-form-label">
-                                Pembimbing KP
-                                <span class="text-red">*</span>
-                            </label>
-                            <div class="col-sm-9">
-                                <select class="form-control select2bs4 w-full" name="mentor" required>
-                                    <option value="">-- Pembimbing KP --</option>
-                                    @foreach ($mentorInternships as $item)
-                                        <option value="{{ $item->id }}" {{ old('mentor') == $item->id ? 'selected' : '' }}>{{ $item->name }}</option>
-                                    @endforeach
-                                </select>
-                            </div>
-                        </div>
-                        <div class="form-group row">
-                            <label for="" class="col-sm-3 col-form-label">
-                                Judul
-                                <span class="text-red">*</span>
-                            </label>
-                            <div class="col-sm-9">
-                                <input type="text" class="form-control" name="title" value="{{ old('title') }}" required>
-                            </div>
-                        </div>
-                        <div class="form-group row">
-                            <label for="" class="col-sm-3 col-form-label">Deskripsi</label>
-                            <div class="col-sm-9">
-                                <textarea class="form-control" name="description" rows="5">{{ old('description') }}</textarea>
-                            </div>
-                        </div>
-                        <div class="form-group row">
-                            <label for="" class="col-sm-3 col-form-label">
-                                Nama Perusahaan
-                                <span class="text-red">*</span>
-                            </label>
-                            <div class="col-sm-9">
-                                <input type="text" class="form-control" name="company_name" value="{{ old('company_name') }}" required>
-                            </div>
-                        </div>
-                        <div class="form-group row">
-                            <label for="" class="col-sm-3 col-form-label">
-                                Alamat Perusahaan
-                                <span class="text-red">*</span>
-                            </label>
-                            <div class="col-sm-9">
-                                <input type="text" class="form-control" name="company_address" value="{{ old('company_address') }}" required>
-                            </div>
-                        </div>
-                        <div class="form-group row">
-                            <label for="" class="col-sm-3 col-form-label">
-                                No. Telepon Perusahaan
-                                <span class="text-red">*</span>
-                            </label>
-                            <div class="col-sm-9">
-                                <input type="number" class="form-control" name="company_phone" pattern="\d*"
-                                    oninput="this.value = this.value.slice(0, 13);" value="{{ old('company_phone') }}" required>
-                            </div>
-                        </div>
-                        <div class="form-group row">
-                            <label for="" class="col-sm-3 col-form-label">
-                                Tanggal Mulai
-                                <span class="text-red">*</span>
-                            </label>
-                            <div class="col-sm-9">
-                                <div class="input-group">
-                                    <div class="input-group-prepend">
-                                        <span class="input-group-text"><i class="far fa-calendar-alt"></i></span>
-                                    </div>
-                                    <input type="text" class="form-control" name="start_date" id="datemask1"
-                                        data-inputmask-alias="datetime" data-inputmask-inputformat="dd/mm/yyyy" data-mask
-                                        value="{{ old('start_date') }}" required>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="form-group row">
-                            <label for="" class="col-sm-3 col-form-label">
-                                Tanggal Berakhir
-                                <span class="text-red">*</span>
-                            </label>
-                            <div class="col-sm-9">
-                                <div class="input-group">
-                                    <div class="input-group-prepend">
-                                        <span class="input-group-text"><i class="far fa-calendar-alt"></i></span>
-                                    </div>
-                                    <input type="text" class="form-control" name="end_date" id="datemask2"
-                                        data-inputmask-alias="datetime" data-inputmask-inputformat="dd/mm/yyyy" data-mask
-                                        value="{{ old('end_date') }}" required>
-                                </div>
-                            </div>
-                        </div>
-                        
                         <div class="form-group row">
                             <label for="" class="col-sm-3 col-form-label">
                                 Formulir Pendaftaran
@@ -134,44 +45,14 @@
                         </div>
                         <div class="form-group row">
                             <label for="" class="col-sm-3 col-form-label">
-                                KRS
-                                <span class="text-red">*</span>
-                            </label>
-                            <div class="col-sm-9">
-                                <div class="input-group">
-                                    <div class="custom-file">
-                                        <input type="file" class="custom-file-input" id="exampleInputFile2"
-                                            name="krs" accept=".pdf, .webp, .png, .jpeg, .jpg" required>
-                                        <label class="custom-file-label" for="exampleInputFile2">Choose file</label>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="form-group row">
-                            <label for="" class="col-sm-3 col-form-label">
-                                Transkrip Nilai
-                                <span class="text-red">*</span>
-                            </label>
-                            <div class="col-sm-9">
-                                <div class="input-group">
-                                    <div class="custom-file">
-                                        <input type="file" class="custom-file-input" id="exampleInputFile3"
-                                            name="transcript" accept=".pdf, .webp, .png, .jpeg, .jpg" value="{{ old('transcript') }}" required>
-                                        <label class="custom-file-label" for="exampleInputFile3">Choose file</label>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="form-group row">
-                            <label for="" class="col-sm-3 col-form-label">
                                 Laporan KP
                                 <span class="text-red">*</span>
                             </label>
                             <div class="col-sm-9">
                                 <div class="input-group">
                                     <div class="custom-file">
-                                        <input type="file" class="custom-file-input" id="exampleInputFile"
-                                            name="report" accept=".pdf, .webp, .png, .jpeg, .jpg" required>
+                                        <input type="file" class="custom-file-input" id="exampleInputFile" name="report"
+                                            accept=".pdf, .webp, .png, .jpeg, .jpg" required>
                                         <label class="custom-file-label" for="exampleInputFile">Choose file</label>
                                     </div>
                                 </div>
@@ -192,46 +73,161 @@
                                 </div>
                             </div>
                         </div>
-                        @if (!Auth::user()->hasRole('student'))
-                            <div class="form-group row">
-                                <label for="" class="col-sm-3 col-form-label">
-                                    Jadwal Seminar
-                                    <span class="text-red">*</span>
-                                </label>
-                                <div class="col-sm-9">
-                                    <div class="input-group">
-                                        <div class="input-group-prepend">
-                                            <span class="input-group-text"><i class="far fa-calendar-alt"></i></span>
-                                        </div>
-                                        <input type="text" class="form-control" name="schedule"
-                                            data-inputmask-alias="datetime" data-inputmask-inputformat="dd/mm/yyyy HH:MM" data-mask
-                                            value="{{ old('end_date') }}" required>
+                        <div class="form-group row">
+                            <label for="" class="col-sm-3 col-form-label">
+                                Pembimbing KP
+                                <span class="text-red">*</span>
+                            </label>
+                            <div class="col-sm-9">
+                                <select class="form-control select2bs4 w-full" name="supervisor"
+                                    {{ Auth::user()->hasRole('student') ? 'disabled' : 'required' }}>
+                                    <option value="">-- Pembimbing KP --</option>
+                                    @foreach ($supervisors as $item)
+                                        <option value="{{ $item->id }}"
+                                            {{ $data->supervisor == $item->id ? 'selected' : '' }}>{{ $item->name }}
+                                        </option>
+                                    @endforeach
+                                </select>
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label for="" class="col-sm-3 col-form-label">
+                                Judul
+                                <span class="text-red">*</span>
+                            </label>
+                            <div class="col-sm-9">
+                                <input type="text" class="form-control" name="title" value="{{ $data->title }}"
+                                    readonly>
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label for="" class="col-sm-3 col-form-label">Deskripsi</label>
+                            <div class="col-sm-9">
+                                <textarea class="form-control" name="description" rows="5" readonly>{{ $data->description }}</textarea>
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label for="" class="col-sm-3 col-form-label">
+                                Nama Perusahaan
+                                <span class="text-red">*</span>
+                            </label>
+                            <div class="col-sm-9">
+                                <input type="text" class="form-control" name="company_name"
+                                    value="{{ $data->company_name }}" readonly>
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label for="" class="col-sm-3 col-form-label">
+                                Alamat Perusahaan
+                                <span class="text-red">*</span>
+                            </label>
+                            <div class="col-sm-9">
+                                <input type="text" class="form-control" name="company_address"
+                                    value="{{ $data->company_address }}" readonly>
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label for="" class="col-sm-3 col-form-label">
+                                No. Telepon Perusahaan
+                                <span class="text-red">*</span>
+                            </label>
+                            <div class="col-sm-9">
+                                <input type="number" class="form-control" name="company_phone" pattern="\d*"
+                                    oninput="this.value = this.value.slice(0, 13);" value="{{ $data->company_phone }}"
+                                    readonly>
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label for="" class="col-sm-3 col-form-label">
+                                Tanggal Mulai
+                                <span class="text-red">*</span>
+                            </label>
+                            <div class="col-sm-9">
+                                <div class="input-group">
+                                    <div class="input-group-prepend">
+                                        <span class="input-group-text"><i class="far fa-calendar-alt"></i></span>
                                     </div>
+                                    <input type="text" class="form-control" name="start_date" id="datemask1"
+                                        data-inputmask-alias="datetime" data-inputmask-inputformat="dd/mm/yyyy" data-mask
+                                        value="{{ \Carbon\Carbon::parse($data->start_date)->timezone(session('timezone', 'Asia/Jakarta'))->format('d/m/Y') }}"
+                                        readonly>
                                 </div>
                             </div>
-                            <div class="form-group row">
-                                <label for="" class="col-sm-3 col-form-label">Penguji KP 1</label>
-                                <div class="col-sm-9">
-                                    <select class="form-control select2bs4 w-full" name="examiner1">
-                                        <option value="">-- Penguji KP --</option>
-                                        @foreach ($examiners as $item)
-                                            <option value="{{ $item->id }}" {{ old('examiner1') == $item->id ? 'selected' : '' }}>{{ $item->name }}</option>
-                                        @endforeach
-                                    </select>
+                        </div>
+                        <div class="form-group row">
+                            <label for="" class="col-sm-3 col-form-label">
+                                Tanggal Berakhir
+                                <span class="text-red">*</span>
+                            </label>
+                            <div class="col-sm-9">
+                                <div class="input-group">
+                                    <div class="input-group-prepend">
+                                        <span class="input-group-text"><i class="far fa-calendar-alt"></i></span>
+                                    </div>
+                                    <input type="text" class="form-control" name="end_date" id="datemask2"
+                                        data-inputmask-alias="datetime" data-inputmask-inputformat="dd/mm/yyyy" data-mask
+                                        value="{{ \Carbon\Carbon::parse($data->end_date)->timezone(session('timezone', 'Asia/Jakarta'))->format('d/m/Y') }}"
+                                        readonly>
                                 </div>
                             </div>
-                            <div class="form-group row">
-                                <label for="" class="col-sm-3 col-form-label">Penguji KP 2</label>
-                                <div class="col-sm-9">
-                                    <select class="form-control select2bs4 w-full" name="examiner2">
-                                        <option value="">-- Penguji KP --</option>
-                                        @foreach ($examiners as $item)
-                                            <option value="{{ $item->id }}" {{ old('examiner2') == $item->id ? 'selected' : '' }}>{{ $item->name }}</option>
-                                        @endforeach
-                                    </select>
-                                </div>
+                        </div>
+                        <div class="form-group row">
+                            <label for="" class="col-sm-3 col-form-label">
+                                Surat Pernyataan
+                                <span class="text-red">*</span>
+                            </label>
+                            <div class="col-sm-9 col-form-label">
+                                @if ($data->statement_url)
+                                    @if (explode('.', $data->statement_url)[1] != 'pdf')
+                                        <a href="{{ asset($data->statement_url) }}" target="_blank">
+                                            <img src="{{ asset($data->statement_url) }}" alt="" height="150px">
+                                        </a>
+                                    @else
+                                        <a href="{{ asset($data->statement_url) }}" target="_blank">
+                                            {{ $data->statement_name }}
+                                        </a>
+                                    @endif
+                                @endif
                             </div>
-                        @endif
+                        </div>
+                        <div class="form-group row">
+                            <label for="" class="col-sm-3 col-form-label">
+                                KRS
+                                <span class="text-red">*</span>
+                            </label>
+                            <div class="col-sm-9 col-form-label">
+                                @if ($data->krs_url)
+                                    @if (explode('.', $data->krs_url)[1] != 'pdf')
+                                        <a href="{{ asset($data->krs_url) }}" target="_blank">
+                                            <img src="{{ asset($data->krs_url) }}" alt="" height="150px">
+                                        </a>
+                                    @else
+                                        <a href="{{ asset($data->krs_url) }}" target="_blank">
+                                            {{ $data->statement_name }}
+                                        </a>
+                                    @endif
+                                @endif
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label for="" class="col-sm-3 col-form-label">
+                                Transkrip Nilai
+                                <span class="text-red">*</span>
+                            </label>
+                            <div class="col-sm-9 col-form-label">
+                                @if ($data->transcript_url)
+                                    @if (explode('.', $data->transcript_url)[1] != 'pdf')
+                                        <a href="{{ asset($data->transcript_url) }}" target="_blank">
+                                            <img src="{{ asset($data->transcript_url) }}" alt="" height="150px">
+                                        </a>
+                                    @else
+                                        <a href="{{ asset($data->transcript_url) }}" target="_blank">
+                                            {{ $data->statement_name }}
+                                        </a>
+                                    @endif
+                                @endif
+                            </div>
+                        </div>
                     </div>
                     <div class="card-footer">
                         <button type="submit" class="btn btn-info px-3">Submit</button>

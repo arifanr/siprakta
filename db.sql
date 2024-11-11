@@ -150,6 +150,7 @@ create table internship_seminar
     assessment_sheet_id bigint      not null,
     schedule        timestamp,
     status          integer     DEFAULT 0 not null,
+    grade           varchar(12),
     created_by      varchar(64)  not null,
     created_at      timestamp    not null,
     updated_by      varchar(64),

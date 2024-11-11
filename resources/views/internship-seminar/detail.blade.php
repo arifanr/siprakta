@@ -72,16 +72,6 @@
                                 </td>
                             </tr>
                             <tr>
-                                <td>Penguji 1</td>
-                                <td>:</td>
-                                <td>{{ $data->examiner1 }}</td>
-                            </tr>
-                            <tr>
-                                <td>Penguji 2</td>
-                                <td>:</td>
-                                <td>{{ $data->examiner2 }}</td>
-                            </tr>
-                            <tr>
                                 <td style="width: 20%">NPM</td>
                                 <td>:</td>
                                 <td>{{ $data->username }}</td>
@@ -94,7 +84,7 @@
                             <tr>
                                 <td>Pembimbing KP</td>
                                 <td>:</td>
-                                <td>{{ $data->mentor_name }}</td>
+                                <td>{{ $data->supervisor_name }}</td>
                             </tr>
                             <tr>
                                 <td>Judul</td>

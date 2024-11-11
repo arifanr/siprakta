@@ -76,7 +76,7 @@ class InternshipController extends Controller
                     WHERE u.id = i.supervisor_id LIMIT 1) AS supervisor_name"),
                 DB::raw("(SELECT n.message
                     FROM notification n
-                    WHERE n.entity_id = i.id
+                    WHERE n.entity_id = i.id AND n.entity = 'internship'
                     ORDER BY n.created_at desc LIMIT 1) AS reason"),
                 DB::raw("(SELECT ud.name
                     FROM users_document ud

@@ -62,10 +62,13 @@
                         <th>Judul</th>
                         <th style="width: 150px">Tempat</th>
                         <th style="width: 150px">Jadwal Seminar</th>
-                        <th style="width: 100px">Penguji 1</th>
-                        <th style="width: 100px">Penguji 2</th>
+                        <th style="width: 100px">Pembimbing</th>
                         <th class="text-center">Status</th>
-                        <th class="text-center" style="min-width: 230px">Action</th>
+                        @if (Auth::user()->hasRole('student'))
+                            <th class="text-center" style="width: 165px">Action</th>
+                        @else
+                            <th class="text-center" style="width: 300px">Action</th>
+                        @endif
                     </tr>
                 </thead>
                 <tbody>
@@ -86,8 +89,7 @@
                                         <i>Menunggu Jadwal</i>
                                     @endif
                                 </td>
-                                <td>{{ $item->examiner1 }}</td>
-                                <td>{{ $item->examiner2 }}</td>
+                                <td>{{ $item->supervisor }}</td>
                                 <td class="text-center">
                                     @if ($item->status == 0)
                                         <span class="badge bg-info">Submited</span>
@@ -98,7 +100,7 @@
                                     @endif
                                 </td>
                                 <td class="text-center">
-                                    {{-- @can('ApproveDenySeminar')
+                                    @can('ApproveDenySeminar')
                                         @if ($item->status == 0)
                                             <form action="{{ route('internship-seminar.approve', [$item->id]) }}" method="post"
                                                 class="d-inline-block">
@@ -115,7 +117,7 @@
                                                 Deny
                                             </button>
                                         @endif
-                                    @endcan --}}
+                                    @endcan
                                     @can('EditSeminarStudent')
                                         @if ($item->status != 1)
                                             <a href="{{ route('internship-seminar.edit', [$item->id]) }}"

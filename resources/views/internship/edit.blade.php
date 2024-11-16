@@ -32,6 +32,19 @@
                     <input type="hidden" name="statement_id" value="{{ $data->statement_id }}">
                     <input type="hidden" name="supervisor_id" value="{{ $data->supervisor_id }}">
                     <div class="card-body">
+                        @if(Auth::user()->hasRole('admin'))
+                            <div class="form-group row">
+                                <label for="" class="col-sm-3 col-form-label">Mahasiswa</label>
+                                <div class="col-sm-9">
+                                    <select class="form-control select2bs4 w-full" name="student" disabled>
+                                        <option value="">-- Mahasiswa --</option>
+                                        @foreach ($students as $item)
+                                            <option value="{{ $item->id }}" {{ $data->student_id == $item->id ? 'selected' : '' }}>{{ $item->name }}</option>
+                                        @endforeach
+                                    </select>
+                                </div>
+                            </div>
+                        @endif
                         <div class="form-group row">
                             <label for="" class="col-sm-3 col-form-label">Pembimbing KP</label>
                             <div class="col-sm-9">

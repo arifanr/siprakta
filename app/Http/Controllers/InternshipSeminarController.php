@@ -132,9 +132,9 @@ class InternshipSeminarController extends Controller
             ->leftJoin('users_document as transcript_document', 'transcript_document.id', '=', 'i.transcript_id')
             ->leftJoin('users_document as report_document', 'report_document.id', '=', 'is.report_id')
             ->leftJoin('users_document as assessment_document', 'assessment_document.id', '=', 'is.assessment_sheet_id')
-            ->leftjoin('notification as n',function($join) {
+            ->leftjoin('notification as n', function ($join) {
                 $join->on('n.entity_id', '=', 'is.id')
-                ->where('n.entity', '=', 'internship_seminar');
+                    ->where('n.entity', '=', 'internship_seminar');
             })
             ->orderBy('created_at', 'asc')
             ->first();
@@ -418,7 +418,7 @@ class InternshipSeminarController extends Controller
                 'report_document.location as report_url',
                 'assessment_document.name as assessment_name',
                 'assessment_document.location as assessment_url',
-                
+
                 DB::raw("(SELECT u.id 
                     FROM users u
                     WHERE u.id = i.supervisor_id LIMIT 1) AS supervisor_id"),

@@ -154,9 +154,9 @@ class FinalProjectSeminarController extends Controller
             ->where('fps.id', '=', $id)
             ->leftjoin('final_project as fp', 'fp.id', '=', 'fps.final_project_id')
             ->leftjoin('users as u', 'u.id', '=', 'fp.student_id')
-            ->leftjoin('notification as n',function($join) {
+            ->leftjoin('notification as n', function ($join) {
                 $join->on('n.entity_id', '=', 'fps.id')
-                ->where('n.entity', '=', 'final_project_seminar');
+                    ->where('n.entity', '=', 'final_project_seminar');
             })
             ->orderBy('created_at', 'asc')
             ->first();

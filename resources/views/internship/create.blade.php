@@ -27,17 +27,19 @@
                     enctype="multipart/form-data">
                     @csrf
                     <div class="card-body">
-                        <div class="form-group row">
-                            <label for="" class="col-sm-3 col-form-label">Pembimbing KP</label>
-                            <div class="col-sm-9">
-                                <select class="form-control select2bs4 w-full" name="supervisor">
-                                    <option value="">-- Pembimbing KP --</option>
-                                    @foreach ($supervisors as $item)
-                                        <option value="{{ $item->id }}" {{ old('supervisor') == $item->id ? 'selected' : '' }}>{{ $item->name }}</option>
-                                    @endforeach
-                                </select>
+                        @if(Auth::user()->hasRole('admin'))
+                            <div class="form-group row">
+                                <label for="" class="col-sm-3 col-form-label">Mahasiswa</label>
+                                <div class="col-sm-9">
+                                    <select class="form-control select2bs4 w-full" name="student" required>
+                                        <option value="">-- Mahasiswa --</option>
+                                        @foreach ($students as $item)
+                                            <option value="{{ $item->id }}" {{ old('student') == $item->id ? 'selected' : '' }}>{{ $item->name }}</option>
+                                        @endforeach
+                                    </select>
+                                </div>
                             </div>
-                        </div>
+                        @endif
                         <div class="form-group row">
                             <label for="" class="col-sm-3 col-form-label">
                                 Judul

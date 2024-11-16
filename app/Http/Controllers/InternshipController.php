@@ -153,8 +153,22 @@ class InternshipController extends Controller
             ->where('flag_delete', '=', 0)
             ->get();
 
+        $students = DB::table('users as u')
+            ->select(
+                'u.id',
+                'u.username',
+                'u.name',
+            )
+            ->leftJoin('users_attribute', 'u.id', '=', 'users_attribute.users_id')
+            ->leftjoin('internship as i', 'i.student_id', '=', 'u.id')
+            ->whereIn('attribute_value', ['student'])
+            ->where('flag_delete', '=', 0)
+            ->whereNull('i.student_id')
+            ->get();
+
         return view('internship/create', [
             'supervisors' => $supervisors,
+            'students' => $students,
         ]);
     }
 
@@ -262,7 +276,7 @@ class InternshipController extends Controller
                 'company_phone' => $request->company_phone,
                 'start_date' => $start_date->toDateTimeString(),
                 'end_date' => $end_date->toDateTimeString(),
-                'student_id' => Auth::user()->id,
+                'student_id' => Auth::user()->hasRole('admin') ? $request->student : Auth::user()->id,
                 'supervisor_id' => $supervisorID,
                 'transcript_id' => $trancriptID,
                 'krs_id' => $krsID,
@@ -302,9 +316,21 @@ class InternshipController extends Controller
             ->where('flag_delete', '=', 0)
             ->get();
 
+        $students = DB::table('users as u')
+            ->select(
+                'u.id',
+                'u.username',
+                'u.name',
+            )
+            ->leftJoin('users_attribute', 'u.id', '=', 'users_attribute.users_id')
+            ->whereIn('attribute_value', ['student'])
+            ->where('flag_delete', '=', 0)
+            ->get();
+
         $query = DB::table('internship as i')
             ->select(
                 'i.*',
+                'u.id as student_id',
                 'u.username',
                 'u.name',
                 DB::raw("(SELECT u.id 
@@ -372,6 +398,7 @@ class InternshipController extends Controller
             'id' => $id,
             'data' => $query,
             'supervisors' => $supervisors,
+            'students' => $students,
         ]);
     }
 

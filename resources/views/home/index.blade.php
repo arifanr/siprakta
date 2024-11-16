@@ -9,117 +9,119 @@
 @section('content')
     <div class="{{ !Auth::user()->hasRole('student') ? 'row justify-content-center' : 'row' }}">
         @can('status')
-            <div class="col-md-6">
-                <div class="row">
-                    @if ($internship)
-                        <div class="col-md-12">
-                            <div class="card card-outline card-warning">
-                                <div class="card-header">
-                                    <h3 class="card-title">
-                                        <b>Status Kerja Praktik</b>
-                                    </h3>
-                                </div>
-                                <div class="card-body table-responsive">
-                                    <table class="table table-borderless table-sm">
-                                        <tbody>
-                                            <tr>
-                                                <td style="width: 120px">Status</td>
-                                                <td style="width: 10px">:</td>
-                                                <td>
-                                                    @if ($internship->status == 0)
-                                                        Mengajukan KP
-                                                    @elseif ($internship->status == 1)
-                                                        @if ($internship->seminar_status == 0)
-                                                            Mengajukan Seminar KP
-                                                        @elseif ($internship->seminar_status == 1)
-                                                            Seminar KP Disetujui
-                                                        @elseif ($internship->seminar_status == 2)
-                                                            <span class="text-red">Seminar KP Ditolak</span>
-                                                        @else
-                                                            KP Disetujui
+            @if ($internship || $finalproject)
+                <div class="col-md-6">
+                    <div class="row">
+                        @if ($internship)
+                            <div class="col-md-12">
+                                <div class="card card-outline card-warning">
+                                    <div class="card-header">
+                                        <h3 class="card-title">
+                                            <b>Status Kerja Praktik</b>
+                                        </h3>
+                                    </div>
+                                    <div class="card-body table-responsive">
+                                        <table class="table table-borderless table-sm">
+                                            <tbody>
+                                                <tr>
+                                                    <td style="width: 120px">Status</td>
+                                                    <td style="width: 10px">:</td>
+                                                    <td>
+                                                        @if ($internship->status == 0)
+                                                            Mengajukan KP
+                                                        @elseif ($internship->status == 1)
+                                                            @if ($internship->seminar_status == 0)
+                                                                Mengajukan Seminar KP
+                                                            @elseif ($internship->seminar_status == 1)
+                                                                Seminar KP Disetujui
+                                                            @elseif ($internship->seminar_status == 2)
+                                                                <span class="text-red">Seminar KP Ditolak</span>
+                                                            @else
+                                                                KP Disetujui
+                                                            @endif
+                                                        @elseif ($internship->status == 2)
+                                                            <span class="text-red">KP Ditolak</span>
                                                         @endif
-                                                    @elseif ($internship->status == 2)
-                                                        <span class="text-red">KP Ditolak</span>
-                                                    @endif
-                                                </td>
-                                            </tr>
-                                            <tr>
-                                                <td>Jadwal Seminar</td>
-                                                <td>:</td>
-                                                <td>
-                                                    {{ $internship->schedule
-                                                        ? \Carbon\Carbon::parse($internship->schedule)->timezone(session('timezone', 'Asia/Jakarta'))->format('d M Y H:i') . ' WIB'
-                                                        : 'Belum ada Jadwal' }}
-                                                </td>
-                                            </tr>
-                                            <tr>
-                                                <td>Nilai</td>
-                                                <td>:</td>
-                                                <td>{{ $internship->grade }}</td>
-                                            </tr>
-                                        </tbody>
-                                    </table>
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td>Jadwal Seminar</td>
+                                                    <td>:</td>
+                                                    <td>
+                                                        {{ $internship->schedule
+                                                            ? \Carbon\Carbon::parse($internship->schedule)->timezone(session('timezone', 'Asia/Jakarta'))->format('d M Y H:i') . ' WIB'
+                                                            : 'Belum ada Jadwal' }}
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td>Nilai</td>
+                                                    <td>:</td>
+                                                    <td>{{ $internship->grade }}</td>
+                                                </tr>
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                    <div class="card-footer"></div>
                                 </div>
-                                <div class="card-footer"></div>
                             </div>
-                        </div>
-                    @endif
+                        @endif
 
-                    @if ($finalproject)
-                        <div class="col-md-12">
-                            <div class="card card-outline card-danger">
-                                <div class="card-header">
-                                    <h3 class="card-title">
-                                        <b>Status Tugas Akhir</b>
-                                    </h3>
-                                </div>
-                                <div class="card-body table-responsive">
-                                    <table class="table table-borderless table-sm">
-                                        <tbody>
-                                            <tr>
-                                                <td style="width: 120px">Status</td>
-                                                <td style="width: 10px">:</td>
-                                                <td>
-                                                    @if ($finalproject->status == 0)
-                                                        Mengajukan TA
-                                                    @elseif ($finalproject->status == 1)
-                                                        @if ($finalproject->seminar_status == 0)
-                                                            Mengajukan Seminar TA
-                                                        @elseif ($finalproject->seminar_status == 1)
-                                                            Seminar TA Disetujui
-                                                        @elseif ($finalproject->seminar_status == 2)
-                                                            <span class="text-red">Seminar TA Ditolak</span>
-                                                        @else
-                                                            TA Disetujui
+                        @if ($finalproject)
+                            <div class="col-md-12">
+                                <div class="card card-outline card-danger">
+                                    <div class="card-header">
+                                        <h3 class="card-title">
+                                            <b>Status Tugas Akhir</b>
+                                        </h3>
+                                    </div>
+                                    <div class="card-body table-responsive">
+                                        <table class="table table-borderless table-sm">
+                                            <tbody>
+                                                <tr>
+                                                    <td style="width: 120px">Status</td>
+                                                    <td style="width: 10px">:</td>
+                                                    <td>
+                                                        @if ($finalproject->status == 0)
+                                                            Mengajukan TA
+                                                        @elseif ($finalproject->status == 1)
+                                                            @if ($finalproject->seminar_status == 0)
+                                                                Mengajukan Seminar TA
+                                                            @elseif ($finalproject->seminar_status == 1)
+                                                                Seminar TA Disetujui
+                                                            @elseif ($finalproject->seminar_status == 2)
+                                                                <span class="text-red">Seminar TA Ditolak</span>
+                                                            @else
+                                                                TA Disetujui
+                                                            @endif
+                                                        @elseif ($finalproject->status == 2)
+                                                            <span class="text-red">TA Ditolak</span>
                                                         @endif
-                                                    @elseif ($finalproject->status == 2)
-                                                        <span class="text-red">TA Ditolak</span>
-                                                    @endif
-                                                </td>
-                                            </tr>
-                                            <tr>
-                                                <td>Jadwal Seminar</td>
-                                                <td>:</td>
-                                                <td>
-                                                    {{ $finalproject->schedule
-                                                        ? \Carbon\Carbon::parse($finalproject->schedule)->timezone(session('timezone', 'Asia/Jakarta'))->format('d M Y H:i') . ' WIB'
-                                                        : 'Belum ada Jadwal' }}
-                                                </td>
-                                            </tr>
-                                            <tr>
-                                                <td>Nilai</td>
-                                                <td>:</td>
-                                                <td>{{ $finalproject->grade }}</td>
-                                            </tr>
-                                        </tbody>
-                                    </table>
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td>Jadwal Seminar</td>
+                                                    <td>:</td>
+                                                    <td>
+                                                        {{ $finalproject->schedule
+                                                            ? \Carbon\Carbon::parse($finalproject->schedule)->timezone(session('timezone', 'Asia/Jakarta'))->format('d M Y H:i') . ' WIB'
+                                                            : 'Belum ada Jadwal' }}
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td>Nilai</td>
+                                                    <td>:</td>
+                                                    <td>{{ $finalproject->grade }}</td>
+                                                </tr>
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                    <div class="card-footer"></div>
                                 </div>
-                                <div class="card-footer"></div>
                             </div>
-                        </div>
-                    @endif
+                        @endif
+                    </div>
                 </div>
-            </div>
+            @endif
         @endcan
         <div class="col-md-6">
             <div class="card card-outline card-info">

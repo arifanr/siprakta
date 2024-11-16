@@ -61,11 +61,11 @@
                         @endif
                         <th>Judul</th>
                         <th style="width: 150px">Jadwal Seminar</th>
-                        <th>Pembimbing 1</th>
-                        <th>Pembimbing 2</th>
-                        <th>Penguji 1</th>
-                        <th>Penguji 2</th>
-                        <th>Penguji 3</th>
+                        <th>Pembimbing&nbsp;1</th>
+                        <th>Pembimbing&nbsp;2</th>
+                        <th>Penguji&nbsp;1</th>
+                        <th>Penguji&nbsp;2</th>
+                        <th>Penguji&nbsp;3</th>
                         <th class="text-center">Status</th>
                         @if (Auth::user()->hasRole('student'))
                             <th class="text-center" style="width: 165px">Action</th>

@@ -50,6 +50,36 @@ class AuthServiceProvider extends ServiceProvider
             ]);
         });
 
+        Gate::define('ListInternship', function($user){
+            return $user->hasAnyRoles([
+                'admin',
+                'koordinator',
+                'pembimbing_kp',
+                'pembimbing_ta',
+                'pembimbing_akademik',
+                'penguji_kp',
+                'penguji_ta',
+            ]);
+        });
+
+        Gate::define('DetailInternship', function($user){
+            return $user->hasAnyRoles([
+                'admin',
+                'koordinator',
+                'pembimbing_kp',
+                'pembimbing_ta',
+                'pembimbing_akademik',
+                'penguji_kp',
+                'penguji_ta',
+            ]);
+        });
+
+        Gate::define('DetailInternshipStudent', function($user){
+            return $user->hasAnyRoles([
+                'student',
+            ]);
+        });
+
         Gate::define('CreateInternship', function($user){
             return $user->hasAnyRoles([
                 'admin',

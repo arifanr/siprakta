@@ -742,4 +742,43 @@ class FinalProjectSeminarController extends Controller
             return back()->with('error', 'Failed to upload data: ' . $e->getMessage())->withInput();
         }
     }
+
+    /**
+     * 
+     */
+    public function reset($id)
+    {
+        try {
+            DB::beginTransaction();
+
+            DB::table('final_project_seminar')
+                ->where('id', $id)
+                ->update([
+                    'status' => 0,
+                    'updated_by' => Auth::user()->username,
+                    'updated_at' => Carbon::now('UTC')
+                ]);
+
+            DB::table('notification')
+                ->insert([
+                    'type' => 'reset',
+                    'title' => 'Reset Status',
+                    'message' => '',
+                    'entity' => 'final_project_seminar',
+                    'entity_id' => $id,
+                    'users_id' => Auth::user()->id,
+                    'created_by' => Auth::user()->username,
+                    'created_at' => Carbon::now('UTC')
+                ]);
+
+            DB::commit();
+
+            return redirect()
+                ->route('finalproject-seminar.list')
+                ->with('success', 'Seminar status updated successfully.');
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return back()->with('error', 'Failed to upload data: ' . $e->getMessage())->withInput();
+        }
+    }
 }

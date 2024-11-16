@@ -27,6 +27,7 @@ Route::middleware('auth')->group(function () {
     Route::patch('/internship/update/{id}', [InternshipController::class, 'update'])->name('internship.update');
     Route::patch('/internship/approve/{id}', [InternshipController::class, 'approve'])->name('internship.approve');
     Route::patch('/internship/deny/{id}', [InternshipController::class, 'deny'])->name('internship.deny');
+    Route::patch('/internship/reset/{id}', [InternshipController::class, 'reset'])->name('internship.reset');
 
     Route::get('/final-project/list', [FinalProjectController::class, 'index'])->name('finalproject.list');
     Route::get('/final-project/detail/{id}', [FinalProjectController::class, 'detail'])->name('finalproject.detail');
@@ -36,6 +37,7 @@ Route::middleware('auth')->group(function () {
     Route::patch('/final-project/update/{id}', [FinalProjectController::class, 'update'])->name('finalproject.update');
     Route::patch('/final-project/approve/{id}', [FinalProjectController::class, 'approve'])->name('finalproject.approve');
     Route::patch('/final-project/deny/{id}', [FinalProjectController::class, 'deny'])->name('finalproject.deny');
+    Route::patch('/final-project/reset/{id}', [FinalProjectController::class, 'reset'])->name('finalproject.reset');
 
     Route::get('/internship-seminar/list', [InternshipSeminarController::class, 'index'])->name('internship-seminar.list');
     Route::get('/internship-seminar/detail/{id}', [InternshipSeminarController::class, 'detail'])->name('internship-seminar.detail');
@@ -45,6 +47,7 @@ Route::middleware('auth')->group(function () {
     Route::patch('/internship-seminar/update/{id}', [InternshipSeminarController::class, 'update'])->name('internship-seminar.update');
     Route::patch('/internship-seminar/approve/{id}', [InternshipSeminarController::class, 'approve'])->name('internship-seminar.approve');
     Route::patch('/internship-seminar/deny/{id}', [InternshipSeminarController::class, 'deny'])->name('internship-seminar.deny');
+    Route::patch('/internship-seminar/reset/{id}', [InternshipSeminarController::class, 'reset'])->name('internship-seminar.reset');
 
     Route::get('/final-project-seminar/list', [FinalProjectSeminarController::class, 'index'])->name('finalproject-seminar.list');
     Route::get('/final-project-seminar/detail/{id}', [FinalProjectSeminarController::class, 'detail'])->name('finalproject-seminar.detail');
@@ -54,5 +57,6 @@ Route::middleware('auth')->group(function () {
     Route::patch('/final-project-seminar/update/{id}', [FinalProjectSeminarController::class, 'update'])->name('finalproject-seminar.update');
     Route::patch('/final-project-seminar/approve/{id}', [FinalProjectSeminarController::class, 'approve'])->name('finalproject-seminar.approve');
     Route::patch('/final-project-seminar/deny/{id}', [FinalProjectSeminarController::class, 'deny'])->name('finalproject-seminar.deny');
+    Route::patch('/final-project-seminar/reset/{id}', [FinalProjectSeminarController::class, 'reset'])->name('finalproject-seminar.reset');
 });
 

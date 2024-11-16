@@ -34,6 +34,16 @@
                                     <i class="fas fa-fw fa-thumbs-down"></i>
                                     Deny
                                 </button>
+                            @elseif ($data->status != 0)
+                                <form action="{{ route('internship-seminar.reset', [$data->id]) }}" method="post"
+                                    class="d-inline-block">
+                                    @csrf
+                                    {{ method_field('patch') }}
+                                    <button type="submit" class="btn btn-warning btn-sm">
+                                        <i class="fas fa-fw fa-sync-alt"></i>
+                                        Reset Status
+                                    </button>
+                                </form>
                             @endif
                         @endcan
                         @can('EditSeminarStudent')
@@ -61,7 +71,7 @@
                         <tbody>
                             <tr>
                                 <td>Jadwal Seminar</td>
-                                <td>:</td>
+                                <td style="width: 10px">:</td>
                                 <td>
                                     @if ($data->schedule)
                                         {{ \Carbon\Carbon::parse($data->schedule)->timezone(session('timezone', 'Asia/Jakarta'))->format('d M Y H:i') }}

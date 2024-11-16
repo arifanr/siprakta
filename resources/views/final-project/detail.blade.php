@@ -34,6 +34,16 @@
                                     <i class="fas fa-fw fa-thumbs-down"></i>
                                     Deny
                                 </button>
+                            @elseif ($data->status != 0)
+                                <form action="{{ route('finalproject.reset', [$data->id]) }}" method="post"
+                                    class="d-inline-block">
+                                    @csrf
+                                    {{ method_field('patch') }}
+                                    <button type="submit" class="btn btn-warning btn-sm">
+                                        <i class="fas fa-fw fa-sync-alt"></i>
+                                        Reset Status
+                                    </button>
+                                </form>
                             @endif
                         @endcan
                         @can('EditFinalProject')
@@ -54,7 +64,7 @@
                         <tbody>
                             <tr>
                                 <td style="width: 15%">NPM</td>
-                                <td>:</td>
+                                <td style="width: 10px">:</td>
                                 <td>{{ $data->username }}</td>
                             </tr>
                             <tr>

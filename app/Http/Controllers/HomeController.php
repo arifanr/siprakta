@@ -43,7 +43,9 @@ class HomeController extends Controller
                 'fp.status as status',
                 'fps.status as seminar_status',
                 'fps.schedule',
-                'fps.grade',
+                'fps.grade_1',
+                'fps.grade_2',
+                'fps.grade_3',
             )
             ->leftJoin('final_project_seminar as fps', 'fps.final_project_id', '=', 'fp.id')
             ->where('fp.student_id', '=', $user->id)

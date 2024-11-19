@@ -41,12 +41,6 @@
                     <div class="card-body">
                         @if (!Auth::user()->hasRole('student'))
                             <div class="form-group row">
-                                <label for="" class="col-sm-3 col-form-label">Nilai</label>
-                                <div class="col-sm-9">
-                                    <input type="text" class="form-control" name="grade" value="{{ $data->grade }}">
-                                </div>
-                            </div>
-                            <div class="form-group row">
                                 <label for="" class="col-sm-3 col-form-label">
                                     Jadwal Seminar
                                 </label>
@@ -77,6 +71,12 @@
                                 </div>
                             </div>
                             <div class="form-group row">
+                                <label for="" class="col-sm-3 col-form-label">Nilai Penguji 1</label>
+                                <div class="col-sm-9">
+                                    <input type="text" class="form-control" name="grade_1" value="{{ $data->grade_1 }}">
+                                </div>
+                            </div>
+                            <div class="form-group row">
                                 <label for="" class="col-sm-3 col-form-label">Penguji 2</label>
                                 <div class="col-sm-9">
                                     <select class="form-control select2bs4 w-full" name="examiner2">
@@ -91,6 +91,12 @@
                                 </div>
                             </div>
                             <div class="form-group row">
+                                <label for="" class="col-sm-3 col-form-label">Nilai Penguji 2</label>
+                                <div class="col-sm-9">
+                                    <input type="text" class="form-control" name="grade_2" value="{{ $data->grade_2 }}">
+                                </div>
+                            </div>
+                            <div class="form-group row">
                                 <label for="" class="col-sm-3 col-form-label">Penguji 3</label>
                                 <div class="col-sm-9">
                                     <select class="form-control select2bs4 w-full" name="examiner3">
@@ -102,6 +108,12 @@
                                             </option>
                                         @endforeach
                                     </select>
+                                </div>
+                            </div>
+                            <div class="form-group row">
+                                <label for="" class="col-sm-3 col-form-label">Nilai Penguji 3</label>
+                                <div class="col-sm-9">
+                                    <input type="text" class="form-control" name="grade_3" value="{{ $data->grade_3 }}">
                                 </div>
                             </div>
                         @endif

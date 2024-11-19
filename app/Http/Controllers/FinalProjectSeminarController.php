@@ -649,7 +649,9 @@ class FinalProjectSeminarController extends Controller
                     'examiner2_id' => $examiner2ID,
                     'examiner3_id' => $examiner3ID,
                     'status' => 0,
-                    'grade' => $request->grade,
+                    'grade_1' => $request->grade_1,
+                    'grade_2' => $request->grade_2,
+                    'grade_3' => $request->grade_3,
                     'updated_by' => Auth::user()->username,
                     'updated_at' => Carbon::now('UTC')
                 ]);

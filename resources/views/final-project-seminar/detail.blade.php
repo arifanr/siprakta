@@ -87,14 +87,29 @@
                                 <td>{{ $data->examiner1 }}</td>
                             </tr>
                             <tr>
+                                <td>Nilai 1</td>
+                                <td>:</td>
+                                <td>{{ $data->grade_1 }}</td>
+                            </tr>
+                            <tr>
                                 <td>Penguji 2</td>
                                 <td>:</td>
                                 <td>{{ $data->examiner2 }}</td>
                             </tr>
                             <tr>
-                                <td>Penguji 2</td>
+                                <td>Nilai 2</td>
+                                <td>:</td>
+                                <td>{{ $data->grade_2 }}</td>
+                            </tr>
+                            <tr>
+                                <td>Penguji 3</td>
                                 <td>:</td>
                                 <td>{{ $data->examiner3 }}</td>
+                            </tr>
+                            <tr>
+                                <td>Nilai 3</td>
+                                <td>:</td>
+                                <td>{{ $data->grade_3 }}</td>
                             </tr>
                             <tr>
                                 <td style="width: 20%">NPM</td>

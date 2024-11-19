@@ -512,7 +512,6 @@ class InternshipController extends Controller
                     'transcript_id' => $trancriptID,
                     'krs_id' => $krsID,
                     'statement_id' => $statementID,
-                    'status' => 0,
                     'updated_by' => Auth::user()->username,
                     'updated_at' => Carbon::now('UTC')
                 ]);

@@ -110,7 +110,11 @@
                                                 <tr>
                                                     <td>Nilai</td>
                                                     <td>:</td>
-                                                    <td>{{ ($finalproject->grade_1 + $finalproject->grade_2 + $finalproject->grade_3) / 3 }}</td>
+                                                    <td>{{ 
+                                                        $finalproject->grade_3 
+                                                            ? ($finalproject->grade_1 + $finalproject->grade_2 + $finalproject->grade_3) / 3 
+                                                            : ($finalproject->grade_1 + $finalproject->grade_2) / 2 
+                                                    }}</td>
                                                 </tr>
                                             </tbody>
                                         </table>

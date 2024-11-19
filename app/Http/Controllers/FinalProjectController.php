@@ -489,7 +489,6 @@ class FinalProjectController extends Controller
                     'transcript_id' => $trancriptID,
                     'krs_id' => $krsID,
                     'proposal_id' => $proposalID,
-                    'status' => 0,
                     'updated_by' => Auth::user()->username,
                     'updated_at' => Carbon::now('UTC')
                 ]);

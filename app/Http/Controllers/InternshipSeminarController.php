@@ -620,7 +620,6 @@ class InternshipSeminarController extends Controller
                     'registration_id' => $registrationID,
                     'report_id' => $reportID,
                     'assessment_sheet_id' => $assessmentID,
-                    'status' => 0,
                     'grade' => $request->grade,
                     'updated_by' => Auth::user()->username,
                     'updated_at' => Carbon::now('UTC')
